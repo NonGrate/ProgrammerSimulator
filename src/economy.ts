@@ -40,7 +40,7 @@ export const ACQ_MULT = 3 // per acquisition
 export const COMPANY_COUNT = 10
 export const NGP_MULT = 2 // New Game+: all income ×2 per finished run
 // Extra levels unlocked by AGI, so the post-game still has upgrades to buy
-export const AGI_BONUS: Partial<Record<string, number>> = { context: 10, mkt: 10, gpu: 20, sprint: 5 } // GPUs go furthest so fine-tunes don't stall
+export const AGI_BONUS: Partial<Record<string, number>> = { context: 10, mkt: 10, gpu: 15, sprint: 5 } // GPUs go furthest (to 35) so fine-tunes don't stall
 // ...priced on the post-AGI scale, otherwise the old curves make them pocket change
 export const BONUS_LEVEL = { base: 1e23, growth: 6 }
 

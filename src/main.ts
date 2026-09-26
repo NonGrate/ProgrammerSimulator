@@ -34,7 +34,7 @@ let takeoverReady = false
 function enterTakeover() {
   if (takeoverReady) return
   takeoverReady = true
-  initTakeover($('takeover'), () => buy('acq'), () => buy('internet'))
+  initTakeover($('takeover'), () => buy('acq'), () => buy('internet'), ending)
   document.querySelector<HTMLElement>('#tabs [data-v="takeover"]')!.hidden = false
   buildShop()
 }

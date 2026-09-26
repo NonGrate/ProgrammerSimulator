@@ -229,6 +229,8 @@ export const en = {
   'd.finetune': "fine-tuning Clod {model} #{n} · {a} / {b} PF",
   'd.deployFt': "🐟 Deploy fine-tune #{n} · all income ×{m}",
   'k.goal': "🌐 Goal: buy the Internet · ${a} / ${b}",
+  'k.goalDone': "🌐 Goal achieved: you own the Internet",
+  'k.newGame': "⏎ Start New Game+ (all income ×{mult})",
   'k.buyInternet': "🌐 Buy the Internet · ${price}",
   'k.acquire': "Acquire · ${price}",
   'k.owned': "✓ acquired · all income ×3",

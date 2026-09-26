@@ -72,11 +72,11 @@ Real players will probably take 2–3 hours. Layers 3–4 are simulated with ave
 |---|---|---|
 | Fine-tunes | training continues past model 10; each costs `200 × 4^tier` compute and gives **all income ×1.5** | keeps racks and GPUs useful after AGI |
 | Acquisitions | 10 parody companies, `1e25 × 12^n`, each **all income ×3** | Stack Underflow → Cloudflair (~$52 Dc) |
-| Extra upgrade levels | AGI raises caps: Bigger context +10, Marketing +10, GPUs +20, Shorter sprints +5 | priced `1e23 × 6^k` on the post-AGI scale, the old curves would make them pocket change |
+| Extra upgrade levels | AGI raises caps: Bigger context +10, Marketing +10, GPUs +15 (to 35), Shorter sprints +5 | priced `1e23 × 6^k` on the post-AGI scale; GPU 35 ≈ $7.8 Dc, every level stays below the goal (tested) |
 | Final goal | **Buy the Internet** for `3e35` ($300 Dc), **requires all 10 companies** | second ending |
 | New Game+ | restart keeping settings; **all income ×2** per finished run | applied to every $ via `earn()` |
 
-**Simulated greedy player:** Internet bought **21 min after AGI**, about 3 min after the last company, longest wait **1.8 min**. GPUs go to 40 so fine-tunes don't stall once the other caps are reached. Longer variants either left the player with nothing to buy for 5–10 minutes or had 3+ hour tails, because the post-AGI economy compounds fast (fine-tunes × acquisitions × users). Real players need roughly 1.5–2× the simulated time, so ~35–45 min.
+**Simulated greedy player:** Internet bought **~21 min after AGI**, ~2.5 min after the last company, longest wait **1.8 min**. GPUs go to 35 so fine-tunes don't stall once the other caps are reached. Longer variants either left the player with nothing to buy for 5–10 minutes or had 3+ hour tails, because the post-AGI economy compounds fast (fine-tunes × acquisitions × users). Real players need roughly 1.5–2× the simulated time, so ~35–45 min.
 
 ## 5. Not built yet
 - Offline progress for training (currently only automated income counts while you're away).

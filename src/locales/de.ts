@@ -219,6 +219,8 @@ export const de: Dict = {
   'd.finetune': "Fine-Tuning Clod {model} #{n} · {a} / {b} PF",
   'd.deployFt': "🐟 Fine-Tune #{n} deployen · gesamtes Einkommen ×{m}",
   'k.goal': "🌐 Ziel: das Internet kaufen · ${a} / ${b}",
+  'k.goalDone': "🌐 Ziel erreicht: Das Internet gehört dir",
+  'k.newGame': "⏎ Neues Spiel+ starten (gesamtes Einkommen ×{mult})",
   'k.buyInternet': "🌐 Das Internet kaufen · ${price}",
   'k.acquire': "Übernehmen · ${price}",
   'k.owned': "✓ übernommen · gesamtes Einkommen ×3",

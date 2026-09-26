@@ -59,6 +59,15 @@ test('layer 5: only after AGI, with its own prices and multipliers', () => {
   assert.equal(E.globalMult(lv, 0, 1), E.ACQ_MULT ** 2 * E.NGP_MULT)
 })
 
+test('no upgrade level costs more than the final goal', () => {
+  const goal = E.upgradePrice('internet', 0)
+  for (const id of Object.keys(E.UPGRADES) as E.UpgradeId[]) {
+    if (id === 'internet') continue
+    const top = E.maxLevel(id, E.MODEL_COUNT) - 1 // most expensive level you can buy, after AGI
+    assert.ok(E.upgradePrice(id, top) < goal, `${id} level ${top + 1} costs ${E.fmt(E.upgradePrice(id, top))}, goal is ${E.fmt(goal)}`)
+  }
+})
+
 test('fmt', () => {
   assert.equal(E.fmt(0), '0')
   assert.equal(E.fmt(3.5), '3.50')

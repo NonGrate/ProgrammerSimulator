@@ -9,11 +9,11 @@ let goalFill: HTMLElement, goalLabel: HTMLElement, goalBtn: HTMLButtonElement, c
 // Log scale from roughly AGI-level money to the goal, so the bar actually moves during the layer
 const goalProgress = () => Math.min(1, Math.max(0, (Math.log10(Math.max(s.money, 1)) - 22) / (Math.log10(E.upgradePrice('internet', 0)) - 22)))
 
-export function initTakeover(container: HTMLElement, buyAcq: () => void, buyInternet: () => void) {
+export function initTakeover(container: HTMLElement, buyAcq: () => void, buyInternet: () => void, ending: () => void) {
   const goal = el('div', 'train goal'), bar = el('div', 'release')
   goalFill = el('i'); goalLabel = el('span')
   goalBtn = el('button', 'yes') as HTMLButtonElement
-  goalBtn.onclick = buyInternet
+  goalBtn.onclick = () => s.lv.internet ? ending() : buyInternet() // after the goal: reopen the New Game+ choice
   bar.append(goalFill, goalLabel)
   goal.append(bar, goalBtn)
   const grid = el('div', 'companies')
@@ -35,10 +35,17 @@ export function initTakeover(container: HTMLElement, buyAcq: () => void, buyInte
 export function refreshTakeover() {
   if (!goalFill) return
   const goalPrice = E.upgradePrice('internet', 0)
-  goalFill.style.width = `${goalProgress() * 100}%`
-  goalLabel.textContent = t('k.goal', { a: E.fmt(s.money), b: E.fmt(goalPrice) })
-  goalBtn.textContent = t('k.buyInternet', { price: E.fmt(goalPrice) })
-  goalBtn.hidden = !!s.lv.internet || s.money < goalPrice || s.lv.acq < E.COMPANY_COUNT // all 10 companies first
+  if (s.lv.internet) { // goal reached: stays done even after spending, and New Game+ is always one click away
+    goalFill.style.width = '100%'
+    goalLabel.textContent = t('k.goalDone')
+    goalBtn.textContent = t('k.newGame', { mult: E.fmt(E.NGP_MULT ** (s.ngp + 1)) })
+    goalBtn.hidden = false
+  } else {
+    goalFill.style.width = `${goalProgress() * 100}%`
+    goalLabel.textContent = t('k.goal', { a: E.fmt(s.money), b: E.fmt(goalPrice) })
+    goalBtn.textContent = t('k.buyInternet', { price: E.fmt(goalPrice) })
+    goalBtn.hidden = s.money < goalPrice || s.lv.acq < E.COMPANY_COUNT // all 10 companies first
+  }
   cards.forEach((card, i) => {
     const owned = i < s.lv.acq, next = i === s.lv.acq
     card.classList.toggle('owned', owned)

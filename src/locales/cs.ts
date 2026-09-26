@@ -220,6 +220,8 @@ export const cs: Dict = {
   'd.finetune': "doladění Clod {model} #{n} · {a} / {b} PF",
   'd.deployFt': "🐟 Nasadit doladění #{n} · veškerý příjem ×{m}",
   'k.goal': "🌐 Cíl: koupit internet · ${a} / ${b}",
+  'k.goalDone': "🌐 Cíl splněn: internet je tvůj",
+  'k.newGame': "⏎ Začít novou hru+ (veškerý příjem ×{mult})",
   'k.buyInternet': "🌐 Koupit internet · ${price}",
   'k.acquire': "Koupit · ${price}",
   'k.owned': "✓ koupeno · veškerý příjem ×3",
