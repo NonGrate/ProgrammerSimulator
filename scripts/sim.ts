@@ -70,10 +70,10 @@ const value = () => { // $/s now plus what users/compute will add within a minut
   return m + (lv.dc ? r.money * (E.MODEL_MULT - 1) * r.compute * H / E.trainCost(tier) : 0)
 }
 const l3 = t; let l4 = 0
-while (t < 8 * 3600 && tier < E.MODELS.length) {
+while (t < 8 * 3600 && tier < E.MODEL_COUNT) {
   t += 1
   const r = rates(); money += r.money; users += r.users; progress += r.compute
-  if (progress >= E.trainCost(tier)) { progress = 0; tier++; buys.push(t); console.log(`${(t / 60).toFixed(1).padStart(5)}m  >>> deployed Clod ${E.MODELS[tier - 1]} (×${E.modelMult(tier)})`) }
+  if (progress >= E.trainCost(tier)) { progress = 0; tier++; buys.push(t); console.log(`${(t / 60).toFixed(1).padStart(5)}m  >>> deployed model #${tier} (×${E.modelMult(tier)})`) }
   const base = value()
   const ids = (['teams', 'dc', 'team', 'sprint', 'mkt', 'cicd', 'rack', 'gpu', 'context', 'model', 'aspeed'] as const)
     .filter(id => lv[id] < E.UPGRADES[id].max && !E.locked(id, lv, wins.length))
@@ -90,4 +90,4 @@ while (t < 8 * 3600 && tier < E.MODELS.length) {
     console.log(`${(t / 60).toFixed(1).padStart(5)}m  ${best.id.padEnd(7)} teams=${teams()} sprint=${lv.sprint} mkt=${lv.mkt} cicd=${lv.cicd} racks=${1 + lv.rack} gpu=${lv.gpu} users=${E.fmt(users)}  $${E.fmt(rates().money)}/s`)
   }
 }
-report(l4, tier === E.MODELS.length ? 'Layer 4 done (AGI)' : 'Ran out of time in layer 4')
+report(l4, tier === E.MODEL_COUNT ? 'Layer 4 done (AGI)' : 'Ran out of time in layer 4')

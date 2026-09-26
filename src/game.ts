@@ -1,15 +1,16 @@
 // Shared state, save/load, sound and small DOM helpers used by every layer.
 import * as E from './economy.ts'
+import { detectLang } from './i18n.ts'
 
 export type Save = {
   money: number; windows: number; lv: E.Levels; users: number; tier: number; progress: number
-  sound: boolean; theme: string; cod: boolean; agi: boolean; played: number; savedAt: number
+  sound: boolean; theme: string; lang: string; cod: boolean; agi: boolean; played: number; savedAt: number
 }
 const KEY = 'clodcod-save'
 const zeroLevels = () => Object.fromEntries(Object.keys(E.UPGRADES).map(k => [k, 0])) as E.Levels
 export const fresh = (): Save => ({
   money: 0, windows: 1, lv: zeroLevels(), users: 0, tier: 0, progress: 0,
-  sound: true, theme: 'green', cod: false, agi: false, played: 0, savedAt: Date.now(),
+  sound: true, theme: 'green', lang: detectLang(), cod: false, agi: false, played: 0, savedAt: Date.now(),
 })
 const loaded = JSON.parse(localStorage.getItem(KEY) ?? '{}')
 export const s: Save = { ...fresh(), ...loaded, lv: { ...zeroLevels(), ...loaded.lv } } // merge so old saves get new upgrades
@@ -44,7 +45,9 @@ export const sfx = {
 
 // ---------- effects ----------
 export function floatText(text: string, at: HTMLElement, bad = false) {
-  const r = at.getBoundingClientRect(), f = el('span', bad ? 'float bad' : 'float', text)
+  const r = at.getBoundingClientRect()
+  if (!r.width && !r.height) return // hidden view (e.g. teams shipping while you're in the datacenter)
+  const f = el('span', bad ? 'float bad' : 'float', text)
   f.style.left = `${r.left + r.width / 2 - 20}px`; f.style.top = `${r.top - 10}px`
   document.body.append(f); setTimeout(() => f.remove(), 900)
 }
@@ -53,13 +56,16 @@ export function toast(msg: string) {
   const t = $('toast'); t.textContent = msg; t.classList.add('show')
   clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 4000)
 }
+// Rewriting a button's children mid-click makes the browser drop the click, so only touch it when the text changed.
+export function setHtml(e: HTMLElement, html: string) { if (e.dataset.html !== html) { e.dataset.html = html; e.innerHTML = html } }
+
 // The dashed "+ buy another" tile at the end of each grid
 export function ghostTile(label: string, onclick: () => void) {
   const b = el('button', 'ghost-tile') as HTMLButtonElement
   b.onclick = onclick
   return { el: b, update(price: number, maxed: boolean) {
     b.hidden = maxed; b.disabled = s.money < price
-    b.innerHTML = `<span>+ ${label}</span><span>$${E.fmt(price)}</span>`
+    setHtml(b, `<span>+ ${label}</span><span>$${E.fmt(price)}</span>`)
   } }
 }
 // Red flash + shake, cleared after a moment (restarting it if you mess up twice in a row)

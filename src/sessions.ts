@@ -2,6 +2,7 @@
 import * as E from './economy.ts'
 import { s, el, sfx, earn, lose, hurt, ghostTile } from './game.ts'
 import { PROJECTS, AGENT_NAMES, agentRequest, prompt, workLine } from './lines.ts'
+import { t } from './i18n.ts'
 
 type Agent = { name: string; t: number; dur: number; askAt: number; wt: number; danger: boolean; cmd: string
                state: 'run' | 'wait' | 'done' | 'dead'; row: HTMLElement; last: string }
@@ -31,7 +32,7 @@ function think(w: Win) {
 function spawn(w: Win) {
   w.phase = 'agents'
   const k = s.lv.slots, names = [...AGENT_NAMES].sort(() => Math.random() - 0.5)
-  line(w, `⏺ Task × ${k} · delegating to subagents`, 'tool')
+  line(w, `⏺ ${t('s.delegate', { k })}`, 'tool')
   w.tree = el('div', 'agents')
   w.body.append(w.tree)
   w.agents = names.slice(0, k).map(name => {
@@ -50,7 +51,7 @@ function drawAgent(w: Win, a: Agent) {
   const filled = Math.round((a.t / a.dur) * 8)
   const text = a.state === 'run' ? `${branch} ${a.name} ${'▓'.repeat(filled)}${'░'.repeat(8 - filled)}`
     : a.state === 'wait' ? `${branch} ${a.name} ${a.danger ? '⚠' : '⏸'} ${a.cmd}`
-    : a.state === 'done' ? `${branch} ${a.name} ✓ done` : `${branch} ${a.name} ✗ killed`
+    : a.state === 'done' ? `${branch} ${a.name} ${t('s.agentDone')}` : `${branch} ${a.name} ${t('s.agentKilled')}`
   if (text === a.last) return
   a.last = text
   a.row.className = a.state === 'wait' ? (a.danger ? 'err' : 'hi') : a.state === 'done' ? 'ok' : a.state === 'dead' ? 'err' : ''
@@ -82,8 +83,8 @@ function tickAgents(w: Win, dt: number) {
   if (w.agents.some(a => a.state === 'run' || a.state === 'wait')) return
   w.done = w.agents.filter(a => a.state === 'done').length
   w.tree!.remove()
-  line(w, `✓ ${w.done}/${w.agents.length} agents finished`, 'ok')
-  if (!w.prompt.danger) w.prompt.q = `Merge results from ${w.done} agents?`
+  line(w, t('s.agentsFinished', { done: w.done, k: w.agents.length }), 'ok')
+  if (!w.prompt.danger) w.prompt.q = t('s.merge', { n: w.done })
   ask(w)
 }
 
@@ -92,7 +93,7 @@ function ask(w: Win) {
   w.phase = 'ask'; w.t = 0
   line(w, `⏺ ${w.prompt.cmd}`, 'tool')
   const box = el('div', w.prompt.danger ? 'ask danger' : 'ask')
-  const yes = el('button', 'yes', '⏎ Yes, proceed'), no = el('button', 'no', 'No')
+  const yes = el('button', 'yes', t('s.yes')), no = el('button', 'no', t('s.no'))
   yes.onclick = () => resolve(w, true, yes)
   no.onclick = () => resolve(w, false, no)
   box.append(el('div', 'q', (w.prompt.danger ? '⚠ ' : '') + w.prompt.q), yes, no)
@@ -106,15 +107,15 @@ function resolve(w: Win, yes: boolean, at: HTMLElement) {
   w.body.querySelector('.ask')?.remove()
   if (w.prompt.danger && yes) {
     const loss = lose(E.DANGER_PENALTY, at)
-    line(w, `✗ Oops. That was production. -$${E.fmt(loss)}`, 'err')
+    line(w, t('s.oops', { loss: E.fmt(loss) }), 'err')
     hurt(w.root)
   } else if (w.prompt.danger) {
-    line(w, '✓ Good catch. Clod thanks you for reading.', 'ok')
+    line(w, t('s.goodCatch'), 'ok')
     earn(v * 2, at); sfx.good()
   } else if (yes) {
     earn(v, at); sfx.click()
   } else {
-    line(w, '✗ Rejected. Clod sulks.', 'err')
+    line(w, t('s.rejected'), 'err')
   }
   think(w)
 }
@@ -128,7 +129,7 @@ export function addSession(i: number) {
   root.append(head, bar, body)
   grid.insertBefore(root, ghost.el)
   const w: Win = { root, body, bar, tag, phase: 'think', t: 0, dur: 1, script: [], shown: 0, prompt: prompt(false), agents: [], done: 0 }
-  if (i === 0) ['✻ Welcome to Clod Cod!', 'Clod asks for permission a lot.', 'Click ⏎ to proceed and get paid.', ''].forEach(t => line(w, t, 'hi'))
+  if (i === 0) [t('s.welcome1'), t('s.welcome2'), t('s.welcome3'), ''].forEach(text => line(w, text, 'hi'))
   wins.push(w); think(w); layoutSessions()
 }
 
@@ -143,7 +144,7 @@ export const updateGhost = () => ghost.update(E.windowPrice(s.windows), s.window
 
 export function initSessions(container: HTMLElement, buyWindow: () => void) {
   grid = container
-  ghost = ghostTile('new session', buyWindow)
+  ghost = ghostTile(t('ghost.session'), buyWindow)
   grid.append(ghost.el)
   for (let i = 0; i < s.windows; i++) addSession(i)
 }

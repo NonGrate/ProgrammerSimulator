@@ -32,28 +32,28 @@ export const OVERHEAT_CHANCE = 1 / 60 // per rack per second
 export const TRAIN_BASE = 200 // compute for the first model
 export const TRAIN_GROWTH = 4
 export const MODEL_MULT = 3
-export const MODELS = ['Minnow', 'Sardine', 'Mackerel', 'Tuna', 'Swordfish', 'Shark', 'Orca', 'Whale', 'Kraken', 'Leviathan']
+export const MODEL_COUNT = 10 // names live in the locales
 
 export const WINDOW = { base: 10, growth: 1.5 }
 export const UPGRADES = {
-  model:   { name: 'Faster model',         desc: 'think time ×0.85',                   base: 20,   growth: 2,    max: 10 },
-  context: { name: 'Bigger context',       desc: '$ per proceed ×1.75',                base: 100,  growth: 2.05, max: 30 },
-  auto:    { name: 'Auto-accept',          desc: 'auto-clicks a session',              base: 25,   growth: 1.45, max: MAX_WINDOWS },
-  allow:   { name: 'Permission allowlist', desc: 'auto-accept rejects danger prompts', base: 1500, growth: 1,    max: 1 },
-  agents:  { name: 'Subagents',            desc: 'unlock layer 2',                     base: 1e5,  growth: 1,    max: 1 },
-  slots:   { name: 'Agent slot',           desc: '+1 agent per session',               base: 3e5,  growth: 10,   max: 5 },
-  aspeed:  { name: 'Agent speed',          desc: 'agent time ×0.85',                   base: 3e5,  growth: 2.5,  max: 15 },
-  aauto:   { name: 'Agents approve each other', desc: 'auto-approves agent requests',  base: 2e7,  growth: 1,    max: 1 },
-  teams:   { name: 'Teams',                desc: 'unlock layer 3',                     base: 2e9,  growth: 1,    max: 1 },
-  team:    { name: 'New team',             desc: '+1 team of 12 sessions',             base: 5e9,  growth: 5,    max: MAX_TEAMS - 1 },
-  sprint:  { name: 'Shorter sprints',      desc: 'release time ×0.85',                 base: 1e10, growth: 3,    max: 10 },
-  mkt:     { name: 'Marketing',            desc: 'users per ship ×2',                  base: 2e10, growth: 4,    max: 20 },
-  cicd:    { name: 'CI/CD',                desc: 'auto-ships a team',                  base: 5e10, growth: 2,    max: MAX_TEAMS },
-  staging: { name: 'Staging environment',  desc: 'CI/CD refuses Friday deploys',       base: 5e11, growth: 1,    max: 1 },
-  dc:      { name: 'Datacenter',           desc: 'unlock layer 4',                     base: 5e14, growth: 1,    max: 1 },
-  rack:    { name: 'GPU rack',             desc: '+1 rack',                            base: 2e15, growth: 1.6,  max: MAX_RACKS - 1 },
-  gpu:     { name: 'Better GPUs',          desc: 'compute ×2',                         base: 5e15, growth: 3,    max: 20 },
-  cooling: { name: 'Liquid cooling',       desc: 'auto-cools overheated racks',        base: 1e17, growth: 1,    max: 1 },
+  model:   { base: 20,   growth: 2,    max: 10 },
+  context: { base: 100,  growth: 2.05, max: 30 },
+  auto:    { base: 25,   growth: 1.45, max: MAX_WINDOWS },
+  allow:   { base: 1500, growth: 1,    max: 1 },
+  agents:  { base: 1e5,  growth: 1,    max: 1 },
+  slots:   { base: 3e5,  growth: 10,   max: 5 },
+  aspeed:  { base: 3e5,  growth: 2.5,  max: 15 },
+  aauto:   { base: 2e7,  growth: 1,    max: 1 },
+  teams:   { base: 2e9,  growth: 1,    max: 1 },
+  team:    { base: 5e9,  growth: 5,    max: MAX_TEAMS - 1 },
+  sprint:  { base: 1e10, growth: 3,    max: 10 },
+  mkt:     { base: 2e10, growth: 4,    max: 20 },
+  cicd:    { base: 1.5e9, growth: 5,   max: MAX_TEAMS }, // ~1.5× the team it automates
+  staging: { base: 5e11, growth: 1,    max: 1 },
+  dc:      { base: 5e14, growth: 1,    max: 1 },
+  rack:    { base: 2e15, growth: 1.6,  max: MAX_RACKS - 1 },
+  gpu:     { base: 5e15, growth: 3,    max: 20 },
+  cooling: { base: 1e17, growth: 1,    max: 1 },
 } as const
 export type UpgradeId = keyof typeof UPGRADES
 export type Levels = Record<UpgradeId, number>
@@ -88,14 +88,15 @@ export function income(lv: Levels, windows: number, human = true) {
   return autoPart + manual * m.pay / m.cycle * f
 }
 
-// Things you can't buy yet (not the same as maxed out)
-export function locked(id: UpgradeId, lv: Levels, windows: number): string | false {
-  const need: Partial<Record<UpgradeId, [boolean, string]>> = {
-    agents: [windows < MAX_WINDOWS, `open all ${MAX_WINDOWS} sessions`],
-    teams: [lv.slots < UPGRADES.slots.max, `max out agent slots`],
-    dc: [lv.team < UPGRADES.team.max, `hire all ${MAX_TEAMS} teams`],
-    auto: [lv.auto >= windows, 'open more sessions'],
-    cicd: [lv.cicd >= 1 + lv.team, 'hire more teams'],
+// Things you can't buy yet (not the same as maxed out). Returns a lock reason key for the locales.
+export type LockReason = 'sessions' | 'slots' | 'teams' | 'moreSessions' | 'moreTeams' | 'locked'
+export function locked(id: UpgradeId, lv: Levels, windows: number): LockReason | false {
+  const need: Partial<Record<UpgradeId, [boolean, LockReason]>> = {
+    agents: [windows < MAX_WINDOWS, 'sessions'],
+    teams: [lv.slots < UPGRADES.slots.max, 'slots'],
+    dc: [lv.team < UPGRADES.team.max, 'teams'],
+    auto: [lv.auto >= windows, 'moreSessions'],
+    cicd: [lv.cicd >= 1 + lv.team, 'moreTeams'],
   }
   const n = need[id]
   if (n) return n[0] && n[1]

@@ -167,3 +167,29 @@ input[type="checkbox"] { accent-color: var(--g); width: 16px; height: 16px; }
 /* Easter egg (🐟 faces left, so it swims right-to-left) */
 .fish { position: fixed; left: 100vw; font-size: 42px; pointer-events: none; z-index: 30; animation: swim linear forwards; }
 @keyframes swim { to { transform: translateX(calc(-100vw - 160px)) } }
+
+/* Start screen: welcome-screen parody */
+#start { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; background: var(--bg);
+         transition: opacity .35s, visibility .35s; }
+#start.gone { opacity: 0; visibility: hidden; }
+.welcome { width: min(720px, 92vw); display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+.w-title { font-size: 18px; color: var(--g); } .w-title b { font-weight: 400; } .w-title .dim { color: #8a9099; }
+#scene { width: 100%; margin: 6px 0 14px; border-top: 3px dotted #8a9099; border-bottom: 3px dotted #8a9099; overflow: visible; }
+#scene .star { font-size: 3px; fill: #e8ebf0; animation: twinkle 2.4s ease-in-out infinite; }
+@keyframes twinkle { 50% { opacity: .25 } }
+#scene .cod { animation: bob 1.2s steps(2) infinite; }
+@keyframes bob { 50% { transform: translateY(-0.6px) } }
+.w-h { font-weight: 700; color: #e8ebf0; margin-bottom: 8px; }
+.welcome p { margin: 0 0 0 18px; } .w-t { color: #e8ebf0; } .w-d { color: #8a9099; margin-bottom: 14px !important; }
+.w-press { align-self: flex-start; background: none; border: 0; padding: 2px 0; margin-top: 4px; color: #a9a6ff; font: inherit; font-size: 15px; }
+.w-press b { color: #d4d2ff; }
+.w-press:hover { text-decoration: underline; }
+.w-press.w-sub { margin-top: 0; color: #8a9099; font-size: 13px; } .w-sub b { color: #c7ccd4; }
+
+/* Settings: language */
+.row.lang { margin: 10px 0 4px; justify-content: space-between; }
+.funfact { margin-top: 16px; gap: 10px; font-size: 12px; }
+#fun-cod svg { width: 32px; display: block; }
+#fun-cod .cod { animation: bob 1.2s steps(2) infinite; }
+select { background: #070b0a; color: var(--txt); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; font: inherit; }
+select:focus { outline: 1px solid var(--g2); }

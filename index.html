@@ -11,8 +11,8 @@
     <div class="logo">✻ Clod Cod</div>
     <div class="money" id="money">$0</div>
     <div id="stats"></div>
-    <nav id="tabs" hidden><button data-v="teams">Teams</button><button data-v="dc">Datacenter</button></nav>
-    <button class="icon" id="open-settings" title="Settings">⚙</button>
+    <nav id="tabs" hidden><button data-v="teams" data-i18n="tab.teams"></button><button data-v="dc" data-i18n="tab.dc"></button></nav>
+    <button class="icon" id="open-settings">⚙</button>
   </header>
 
   <main>
@@ -22,23 +22,39 @@
     <aside class="shop" id="shop"></aside>
   </main>
 
+  <div id="start">
+    <div class="welcome">
+      <div class="w-title"><span data-i18n="start.welcome"></span> <b>Clod Cod</b> <span class="dim" id="version"></span></div>
+      <svg id="scene" viewBox="0 0 84 35" shape-rendering="crispEdges"></svg>
+      <div class="w-h" data-i18n="start.security"></div>
+      <p class="w-t" data-i18n="start.n1t"></p>
+      <p class="w-d" data-i18n="start.n1d"></p>
+      <p class="w-t" data-i18n="start.n2t"></p>
+      <p class="w-d"><span data-i18n="start.n2d"></span><br><span data-i18n="start.more"></span><br>https://clod.cod/docs/trust-me-bro</p>
+      <button class="w-press" id="start-btn"></button>
+      <button class="w-press w-sub" id="start-settings"></button>
+    </div>
+  </div>
+
   <dialog id="settings">
-    <h2>Settings</h2>
-    <label class="row"><input type="checkbox" id="sound" /> Sound</label>
-    <h3>THEME</h3>
+    <h2 data-i18n="settings.title"></h2>
+    <label class="row"><input type="checkbox" id="sound" /> <span data-i18n="settings.sound"></span></label>
+    <label class="row lang"><span data-i18n="settings.language"></span> <select id="lang"></select></label>
+    <h3 data-i18n="settings.theme"></h3>
     <div id="themes"></div>
+    <div class="row funfact"><span id="fun-cod"></span><span class="dim" data-i18n="settings.funFact"></span></div>
     <div class="row end">
-      <button class="ghost danger-text" id="reset">Reset progress</button>
-      <button class="primary" id="close-settings">Done</button>
+      <button class="ghost danger-text" id="reset" data-i18n="settings.reset"></button>
+      <button class="primary" id="close-settings" data-i18n="settings.done"></button>
     </div>
   </dialog>
 
   <dialog id="agi">
-    <h2>🐟 AGI achieved</h2>
-    <p>Clod Leviathan now clicks "proceed" for you. And for everyone else.</p>
-    <p>You are, technically, unemployed. Congratulations.</p>
-    <p class="dim">Time played: <span id="agi-time"></span></p>
-    <div class="row end"><span></span><button class="primary" id="agi-close">Keep clicking anyway</button></div>
+    <h2 data-i18n="agi.title"></h2>
+    <p id="agi-p1"></p>
+    <p data-i18n="agi.p2"></p>
+    <p class="dim"><span data-i18n="agi.time"></span> <span id="agi-time"></span></p>
+    <div class="row end"><span></span><button class="primary" id="agi-close" data-i18n="agi.keep"></button></div>
   </dialog>
 
   <div id="toast"></div>
