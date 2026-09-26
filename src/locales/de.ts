@@ -21,6 +21,8 @@ export const de: Dict = {
   'start.press': 'Drücke {key}, um fortzufahren…',
   'start.pressSettings': 'Drücke {key} für Einstellungen',
 
+  'start.tap': "Hier tippen, um fortzufahren…",
+  'start.tapSettings': "Hier tippen für Einstellungen",
   'settings.title': 'Einstellungen',
   'settings.sound': 'Ton',
   'settings.language': 'Sprache',
@@ -43,6 +45,7 @@ export const de: Dict = {
   'shop.dc': 'RECHENZENTRUM',
   'shop.next': 'NÄCHSTE EBENE',
   'shop.agiDesc': 'Clod {model} deployen',
+  'shop.button': "🛒 Shop",
   'shop.lv': 'Lv',
   'up.window': 'Neue Session',
   'upd.window': '+1 Clod-Fenster',

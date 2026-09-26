@@ -22,6 +22,8 @@ export const sk: Dict = {
   'start.press': 'Stlač {key} pre pokračovanie…',
   'start.pressSettings': 'Stlač {key} pre nastavenia',
 
+  'start.tap': "Ťukni sem pre pokračovanie…",
+  'start.tapSettings': "Ťukni sem pre nastavenia",
   'settings.title': 'Nastavenia',
   'settings.sound': 'Zvuk',
   'settings.language': 'Jazyk',
@@ -44,6 +46,7 @@ export const sk: Dict = {
   'shop.dc': 'DÁTOVÉ CENTRUM',
   'shop.next': 'ĎALŠIA ÚROVEŇ',
   'shop.agiDesc': 'nasaď Clod {model}',
+  'shop.button': "🛒 Obchod",
   'shop.lv': 'Úr.',
   'up.window': 'Nová relácia',
   'upd.window': '+1 okno Clod',

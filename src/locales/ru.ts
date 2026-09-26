@@ -22,6 +22,8 @@ export const ru: Dict = {
   'start.press': 'Нажми {key}, чтобы продолжить…',
   'start.pressSettings': 'Нажми {key}, чтобы открыть настройки',
 
+  'start.tap': "Нажми сюда, чтобы продолжить…",
+  'start.tapSettings': "Нажми сюда, чтобы открыть настройки",
   'settings.title': 'Настройки',
   'settings.sound': 'Звук',
   'settings.language': 'Язык',
@@ -44,6 +46,7 @@ export const ru: Dict = {
   'shop.dc': 'ДАТАЦЕНТР',
   'shop.next': 'СЛЕДУЮЩИЙ УРОВЕНЬ',
   'shop.agiDesc': 'запусти Clod {model}',
+  'shop.button': "🛒 Магазин",
   'shop.lv': 'Ур.',
   'up.window': 'Новая сессия',
   'upd.window': '+1 окно Clod',

@@ -199,3 +199,44 @@ input[type="checkbox"] { accent-color: var(--g); width: 16px; height: 16px; }
 #fun-cod .cod { animation: bob 1.2s steps(2) infinite; }
 select { background: #070b0a; color: var(--txt); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; font: inherit; }
 select:focus { outline: 1px solid var(--g2); }
+
+/* Phone layout. Everything for small screens lives in this one block, so the desktop game is untouched. */
+#shop-toggle { display: none; }
+@media (max-width: 760px) {
+  html, body { height: auto; }
+  body { overflow: auto; padding: 8px 8px 72px; gap: 8px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .hud { flex-wrap: wrap; gap: 6px 14px; padding: 8px 12px; }
+  .brand { gap: 14px; }
+  .logo { font-size: 16px; }
+  .money { font-size: 22px; min-width: 0; }
+  .icon { width: 32px; height: 32px; }
+  #stats { order: 3; width: 100%; flex-wrap: wrap; gap: 2px 14px; font-size: 11px; }
+  main { display: block; }
+  #tabs { width: 100%; } #tabs button { flex: 1; min-width: 0; }
+  /* grids: 2 columns and fixed row heights, the page scrolls instead of squeezing */
+  #grid, #teams, .racks { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: 230px; }
+  #teams { grid-auto-rows: 300px; }
+  .racks { grid-auto-rows: 170px; }
+  #dc { gap: 8px; }
+  .win { font-size: 11px; } .body { padding: 8px; }
+  .ask button { padding: 5px 9px; margin-right: 4px; }
+  .product { font-size: 16px; }
+  /* narrow cards: let status lines wrap instead of cutting them off */
+  .train .release { height: auto; min-height: 28px; } .train .release span { display: block; line-height: 1.4; padding: 4px 8px; }
+  .team .body p.pays, .rack .body p { white-space: normal; }
+  /* shop: bottom sheet opened by the 🛒 button */
+  .shop { position: fixed; left: 0; right: 0; bottom: 0; width: auto; max-height: 65vh; z-index: 30; border-radius: 14px 14px 0 0;
+          padding-bottom: 72px; transform: translateY(100%); transition: transform .25s; box-shadow: 0 -10px 40px #000c; }
+  body.shop-open .shop { transform: none; }
+  #shop-toggle { display: flex; align-items: center; gap: 8px; position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 31;
+                 padding: 10px 22px; border-radius: 24px; border: 1px solid var(--g2); background: var(--panel); color: var(--g); font-weight: 700;
+                 box-shadow: 0 0 18px var(--glow); }
+  #shop-toggle .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--g); box-shadow: 0 0 8px var(--g); visibility: hidden; }
+  #shop-toggle.has .dot { visibility: visible; }
+  body.shop-open #shop-toggle { background: var(--g); color: #04110a; }
+  body.shop-open #shop-toggle .dot { visibility: hidden; }
+  dialog { width: min(380px, 92vw); padding: 16px; }
+  #start { overflow: auto; place-items: start center; padding: 20px 0; }
+  .welcome { font-size: 13px; } .w-title { font-size: 16px; }
+  .fish { font-size: 32px; }
+}

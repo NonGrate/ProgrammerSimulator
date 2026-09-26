@@ -24,6 +24,8 @@ export const en = {
   'start.pressSettings': 'Press {key} for settings',
 
   // Settings
+  'start.tap': "Tap here to continue…",
+  'start.tapSettings': "Tap here for settings",
   'settings.title': 'Settings',
   'settings.sound': 'Sound',
   'settings.language': 'Language',
@@ -47,6 +49,7 @@ export const en = {
   'shop.dc': 'DATACENTER',
   'shop.next': 'NEXT LAYER',
   'shop.agiDesc': 'deploy Clod {model}',
+  'shop.button': "🛒 Shop",
   'shop.lv': 'Lv',
   'up.window': 'New session',
   'upd.window': '+1 Clod window',

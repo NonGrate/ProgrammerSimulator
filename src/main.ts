@@ -104,6 +104,7 @@ function refreshShop() {
     b.classList.toggle('can', !b.disabled)
     b.classList.toggle('locked', !!locked && locked !== 'moreSessions' && locked !== 'moreTeams')
   }
+  $('shop-toggle').classList.toggle('has', !!document.querySelector('#shop .item.can')) // dot: something is affordable
   if (!s.lv.teams) updateGhost(); else updateTeamGhost()
   if (s.lv.dc) updateRackGhost()
 }
@@ -136,6 +137,9 @@ function applyTheme() {
     box.append(b)
   }
 }
+// ---------- phone: shop as a bottom sheet ----------
+$('shop-toggle').onclick = () => document.body.classList.toggle('shop-open')
+
 const dialog = $<HTMLDialogElement>('settings')
 $('fun-cod').innerHTML = codSvg()
 const openSettings = () => { $<HTMLInputElement>('sound').checked = s.sound; dialog.showModal() }
@@ -163,6 +167,13 @@ addEventListener('keydown', e => {
   k = e.key === KONAMI[k] ? k + 1 : e.key === KONAMI[0] ? 1 : 0
   if (k < KONAMI.length) return
   k = 0
+  codMode()
+})
+// No arrow keys on phones: tapping the settings fish 7 times works too
+let taps = 0
+$('fun-cod').onclick = () => { if (++taps % 7 === 0) codMode() }
+
+function codMode() {
   for (let i = 0; i < 12; i++) {
     const f = el('div', 'fish', '🐟')
     f.style.top = `${5 + Math.random() * 85}vh`; f.style.animationDuration = `${3 + Math.random() * 4}s`
@@ -175,7 +186,7 @@ addEventListener('keydown', e => {
     s.cod = true; s.money += bonus; s.theme = 'deepsea'; save(); applyTheme()
     toast(t('toast.cod', { bonus: E.fmt(bonus) }))
   }
-})
+}
 
 // ---------- loop ----------
 function offline(seconds: number) {

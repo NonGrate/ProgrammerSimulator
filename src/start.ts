@@ -73,8 +73,9 @@ export function initStart(onStart: () => void, onSettings: () => void) {
     ${STARS.map(([x, y, d]) => `<text x="${x}" y="${y}" class="star" style="animation-delay:${d}s">*</text>`).join('')}
     ${pix(COD, 10, 26, 'var(--g)', 'cod')}`
   const key = (k: string) => `<b>${k}</b>`
-  $('start-btn').innerHTML = t('start.press', { key: key('Enter') })
-  $('start-settings').innerHTML = t('start.pressSettings', { key: key('S') })
+  const touch = matchMedia('(pointer: coarse)').matches // phones have no Enter/S keys
+  $('start-btn').innerHTML = touch ? t('start.tap') : t('start.press', { key: key('Enter') })
+  $('start-settings').innerHTML = touch ? t('start.tapSettings') : t('start.pressSettings', { key: key('S') })
   $('start-btn').onclick = onStart
   $('start-settings').onclick = onSettings
   addEventListener('keydown', e => {
