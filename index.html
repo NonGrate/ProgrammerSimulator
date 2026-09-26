@@ -8,17 +8,21 @@
 </head>
 <body>
   <header class="hud">
-    <div class="logo">✻ Clod Cod</div>
-    <div class="money" id="money">$0</div>
+    <div class="brand">
+      <div class="logo">✻ Clod Cod</div>
+      <div class="money" id="money">$0</div>
+    </div>
     <div id="stats"></div>
     <button class="icon" id="open-settings">⚙</button>
   </header>
-  <nav id="tabs" hidden><button data-v="teams" data-i18n="tab.teams"></button><button data-v="dc" data-i18n="tab.dc"></button></nav>
 
   <main>
-    <section id="grid" class="view"></section>
-    <section id="teams" class="view"></section>
-    <section id="dc" class="view"></section>
+    <div id="stage">
+      <nav id="tabs" hidden><button data-v="teams" data-i18n="tab.teams"></button><button data-v="dc" data-i18n="tab.dc"></button></nav>
+      <section id="grid" class="view"></section>
+      <section id="teams" class="view"></section>
+      <section id="dc" class="view"></section>
+    </div>
     <aside class="shop" id="shop"></aside>
   </main>
 
