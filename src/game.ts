@@ -62,7 +62,13 @@ export function ghostTile(label: string, onclick: () => void) {
     b.innerHTML = `<span>+ ${label}</span><span>$${E.fmt(price)}</span>`
   } }
 }
-export function hurt(e: HTMLElement) { e.classList.remove('hurt'); void e.offsetWidth; e.classList.add('hurt') }
+// Red flash + shake, cleared after a moment (restarting it if you mess up twice in a row)
+const hurtTimers = new WeakMap<HTMLElement, number>()
+export function hurt(e: HTMLElement) {
+  e.classList.remove('hurt'); void e.offsetWidth; e.classList.add('hurt')
+  clearTimeout(hurtTimers.get(e))
+  hurtTimers.set(e, setTimeout(() => e.classList.remove('hurt'), 1500))
+}
 
 // Every $ goes through here so the $/sec readout sees it.
 export const stats = { earned: 0 }
