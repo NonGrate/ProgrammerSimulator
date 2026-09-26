@@ -5,7 +5,7 @@ import { ru } from './locales/ru.ts'
 import { cs } from './locales/cs.ts'
 import { sk } from './locales/sk.ts'
 import { de } from './locales/de.ts'
-import { MODEL_COUNT } from './economy.ts'
+import { MODEL_COUNT, COMPANY_COUNT } from './economy.ts'
 
 const vars = (s: string) => (s.match(/\{\w+\}/g) ?? []).sort().join()
 
@@ -21,5 +21,6 @@ test('every translation keeps the placeholders of the English text', () => {
     }
     assert.equal(d.models.length, MODEL_COUNT, `${name} models`)
     assert.equal(d.modelLines.length, MODEL_COUNT - 1, `${name} modelLines`) // the last model gets the AGI ending instead
+    assert.equal(d.companyLines.length, COMPANY_COUNT, `${name} companyLines`)
   }
 })

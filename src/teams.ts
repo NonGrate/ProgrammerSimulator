@@ -1,6 +1,6 @@
 // Layer 3: teams build releases from their 12 sessions; shipping pays out and brings users.
 import * as E from './economy.ts'
-import { s, el, sfx, earn, hurt, floatText, ghostTile } from './game.ts'
+import { s, el, sfx, earn, hurt, floatText, ghostTile, ngpMult } from './game.ts'
 import { TEAM_NAMES, workText } from './lines.ts'
 import { t, tl, tp } from './i18n.ts'
 
@@ -51,7 +51,7 @@ function ship(tm: Team, yes: boolean, at: HTMLElement) {
     floatText(t('t.lostUsers', { n: E.fmt(lost) }), at, true); sfx.bad(); hurt(tm.root)
   } else {
     const users = E.usersPerShip(s.lv.mkt)
-    earn(E.shipValue(s.lv, s.users) * E.modelMult(s.tier), at, t('t.gainUsers', { n: E.fmt(users) }))
+    earn(E.shipValue(s.lv, s.users) * E.globalMult(s.lv, s.tier), at, t('t.gainUsers', { n: E.fmt(users) }))
     s.users += users
     log(tm, tm.friday ? tp('monShipped') : tp('shipped', { v: ver(tm) }), 'ok')
     sfx.ship()
@@ -102,7 +102,7 @@ export function tickTeams(dt: number) {
       const p = Math.min(1, tm.t / tm.dur)
       tm.fill.style.width = `${p * 100}%`
       tm.label.textContent = t('t.building', { v: ver(tm), p: Math.floor(p * 100) })
-      tm.pays.textContent = t('t.pays', { x: E.fmt(E.shipValue(s.lv, s.users) * E.modelMult(s.tier)), u: E.fmt(E.usersPerShip(s.lv.mkt)) })
+      tm.pays.textContent = t('t.pays', { x: E.fmt(E.shipValue(s.lv, s.users) * E.globalMult(s.lv, s.tier) * ngpMult()), u: E.fmt(E.usersPerShip(s.lv.mkt)) })
       if (tm.t >= tm.next) { tm.next += 2 + Math.random() * 2; log(tm, workText('teamWork')) }
       if (tm.t >= tm.dur) ready(tm)
     } else if (isAuto(i) && tm.t >= E.AUTO_DELAY) {

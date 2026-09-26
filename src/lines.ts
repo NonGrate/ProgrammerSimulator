@@ -45,6 +45,10 @@ const AGENT_SAFE = ['Edit({file})', 'Bash(npm test)', 'Write({file})', 'Bash(npm
 const AGENT_DANGER = ['rm -rf src/', 'git reset --hard', 'rm -rf tests/', 'npm publish', 'DROP DATABASE', 'force-push main']
 export const agentRequest = (danger: boolean) => fill(pick(danger ? AGENT_DANGER : AGENT_SAFE))
 
+// Layer 5: parody names stay the same in every language; the jokes are in the locales
+export const COMPANIES = [['📚', 'Stack Underflow'], ['🐙', 'GitHug'], ['🔍', 'Goggle'], ['🪟', 'Macrohard'], ['📦', 'Amazoff'],
+  ['👤', 'Faceboot'], ['🍐', 'Pear Inc.'], ['🎬', 'Netflux'], ['🐦', 'Tweeter'], ['☁️', 'Cloudflair']]
+
 // Layer 3 + 4
 export const TEAM_NAMES = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo', 'Foxtrot', 'Golf', 'Hotel']
 export const workText = (pool: 'teamWork' | 'rackWork') => fill(pick(tl(pool)))

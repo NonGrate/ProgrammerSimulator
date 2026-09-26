@@ -10,7 +10,12 @@ let ghost: ReturnType<typeof ghostTile>, grid: HTMLElement, fill: HTMLElement, l
 
 const count = () => 1 + s.lv.rack
 const perRack = () => E.compute(1, s.lv.gpu)
-const modelName = (tier: number) => tl('models')[tier]
+const modelName = (tier: number) => tl('models')[Math.min(tier, E.MODEL_COUNT - 1)]
+const isFinetune = () => s.tier >= E.MODEL_COUNT
+const pad = (n: number) => String(n).padStart(2, '0')
+const clock = (sec: number) => sec >= 3600
+  ? `${Math.floor(sec / 3600)}:${pad(Math.floor(sec / 60) % 60)}:${pad(sec % 60)}`
+  : `${Math.floor(sec / 60)}:${pad(sec % 60)}`
 
 function cool(r: Rack, at: HTMLElement) {
   if (!r.hot) return
@@ -43,11 +48,13 @@ export function addRack(i: number) {
 export const updateRackGhost = () => ghost.update(E.upgradePrice('rack', s.lv.rack), count() >= E.MAX_RACKS)
 
 function deploy(at: HTMLElement) {
-  if (s.tier >= E.MODEL_COUNT || s.progress < E.trainCost(s.tier)) return
+  if (s.progress < E.trainCost(s.tier)) return
+  const mult = isFinetune() ? E.FINETUNE_MULT : E.MODEL_MULT
   s.progress = 0; s.tier++
-  floatText(t('d.incomeMult', { m: E.MODEL_MULT }), at); sfx.deploy()
+  floatText(t('d.incomeMult', { m: mult }), at); sfx.deploy()
   deployBox.innerHTML = ''
   if (s.tier === E.MODEL_COUNT) onAgi()
+  else if (s.tier > E.MODEL_COUNT) toast(t('toast.finetune', { n: s.tier - E.MODEL_COUNT, mult: E.fmt(E.modelMult(s.tier)) }))
   else toast(`${t('toast.deployed', { model: modelName(s.tier - 1), mult: E.fmt(E.modelMult(s.tier)) })} ${tl('modelLines')[s.tier - 1]}`)
 }
 
@@ -75,16 +82,17 @@ export function tickDc(dt: number) {
     if (Math.random() < E.OVERHEAT_CHANCE * dt) { overheat(r); continue }
     if ((r.next -= dt) <= 0) { r.next = 3; r.big.textContent = `${E.fmt(perRack())} PF/s`; r.status.textContent = workText('rackWork') }
   }
-  if (s.tier >= E.MODEL_COUNT) { label.textContent = t('d.agi', { model: modelName(E.MODEL_COUNT - 1) }); fill.style.width = '100%'; return }
-
   const cost = E.trainCost(s.tier), speed = running * perRack()
   s.progress = Math.min(cost, s.progress + speed * dt)
   fill.style.width = `${(s.progress / cost) * 100}%`
   const eta = speed ? Math.ceil((cost - s.progress) / speed) : Infinity
-  label.textContent = t('d.training', { model: modelName(s.tier), a: E.fmt(s.progress), b: E.fmt(cost) }) +
-    (s.progress < cost ? ` · ETA ${isFinite(eta) ? `${Math.floor(eta / 60)}:${String(eta % 60).padStart(2, '0')}` : '∞'}` : '')
+  const nums = { model: modelName(s.tier), n: s.tier - E.MODEL_COUNT + 1, a: E.fmt(s.progress), b: E.fmt(cost) }
+  label.textContent = (isFinetune() ? t('d.finetune', nums) : t('d.training', nums)) +
+    (s.progress < cost ? ` · ETA ${isFinite(eta) ? clock(eta) : '∞'}` : '')
   if (s.progress >= cost && !deployBox.firstChild) {
-    const b = el('button', 'yes', t('d.deploy', { model: modelName(s.tier), m: E.MODEL_MULT }))
+    const b = el('button', 'yes', isFinetune()
+      ? t('d.deployFt', { n: s.tier - E.MODEL_COUNT + 1, m: E.FINETUNE_MULT })
+      : t('d.deploy', { model: modelName(s.tier), m: E.MODEL_MULT }))
     b.onclick = () => deploy(b)
     deployBox.append(b)
   }

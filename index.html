@@ -18,10 +18,11 @@
 
   <main>
     <div id="stage">
-      <nav id="tabs" hidden><button data-v="teams" data-i18n="tab.teams"></button><button data-v="dc" data-i18n="tab.dc"></button></nav>
+      <nav id="tabs" hidden><button data-v="teams" data-i18n="tab.teams"></button><button data-v="dc" data-i18n="tab.dc"></button><button data-v="takeover" data-i18n="tab.takeover" hidden></button></nav>
       <section id="grid" class="view"></section>
       <section id="teams" class="view"></section>
       <section id="dc" class="view"></section>
+      <section id="takeover" class="view"></section>
     </div>
     <aside class="shop" id="shop"></aside>
     <button id="shop-toggle"><span class="dot"></span><span data-i18n="shop.button"></span></button>
@@ -60,6 +61,14 @@
     <p data-i18n="agi.p2"></p>
     <p class="dim"><span data-i18n="agi.time"></span> <span id="agi-time"></span></p>
     <div class="row end"><span></span><button class="primary" id="agi-close" data-i18n="agi.keep"></button></div>
+  </dialog>
+
+  <dialog id="end">
+    <h2 data-i18n="end.title"></h2>
+    <p data-i18n="end.p1"></p>
+    <p data-i18n="end.p2"></p>
+    <p class="dim" id="end-bonus"></p>
+    <div class="row end"><button class="ghost" id="end-no" data-i18n="end.no"></button><button class="primary" id="end-yes" data-i18n="end.yes"></button></div>
   </dialog>
 
   <div id="toast"></div>

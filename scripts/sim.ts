@@ -61,33 +61,38 @@ const teams = () => 1 + lv.team
 function rates() {
   const R = E.releaseTime(lv.sprint), auto = Math.min(lv.cicd, teams()), manual = teams() - auto
   const ships = auto / (R + E.AUTO_DELAY) + manual / (R + E.HUMAN.react)
-  return { money: ships * E.shipValue(lv, users) * E.modelMult(tier), users: ships * E.usersPerShip(lv.mkt),
+  return { money: ships * E.shipValue(lv, users) * E.globalMult(lv, tier), users: ships * E.usersPerShip(lv.mkt),
            compute: lv.dc ? E.compute(1 + lv.rack, lv.gpu) * (lv.cooling ? 1 : 0.97) : 0 }
 }
 const value = () => { // $/s now plus what users/compute will add within a minute
   const r = rates(), H = 60
   const m = r.money * (E.userMult(users + r.users * H) / E.userMult(users))
-  return m + (lv.dc ? r.money * (E.MODEL_MULT - 1) * r.compute * H / E.trainCost(tier) : 0)
+  const next = tier < E.MODEL_COUNT ? E.MODEL_MULT : E.FINETUNE_MULT
+  return m + (lv.dc ? r.money * (next - 1) * r.compute * H / E.trainCost(tier) : 0)
 }
-const l3 = t; let l4 = 0
-while (t < 8 * 3600 && tier < E.MODEL_COUNT) {
+const l3 = t; let l4 = 0, l5 = 0
+while (t < 10 * 3600 && !lv.internet) {
   t += 1
   const r = rates(); money += r.money; users += r.users; progress += r.compute
-  if (progress >= E.trainCost(tier)) { progress = 0; tier++; buys.push(t); console.log(`${(t / 60).toFixed(1).padStart(5)}m  >>> deployed model #${tier} (×${E.modelMult(tier)})`) }
+  if (progress >= E.trainCost(tier)) {
+    progress = 0; tier++; buys.push(t); console.log(`${(t / 60).toFixed(1).padStart(5)}m  >>> deployed model #${tier} (×${E.fmt(E.modelMult(tier))})`)
+    if (tier === E.MODEL_COUNT) { report(l4, 'Layer 4 done (AGI)'); l5 = t }
+  }
   const base = value()
-  const ids = (['teams', 'dc', 'team', 'sprint', 'mkt', 'cicd', 'rack', 'gpu', 'context', 'model', 'aspeed'] as const)
-    .filter(id => lv[id] < E.UPGRADES[id].max && !E.locked(id, lv, wins.length))
+  const ids = (['teams', 'dc', 'internet', 'team', 'sprint', 'mkt', 'cicd', 'rack', 'gpu', 'context', 'model', 'aspeed', 'acq'] as const)
+    .filter(id => lv[id] < E.maxLevel(id, tier) && !E.locked(id, lv, wins.length, tier))
+    .filter(id => id !== 'internet' || money >= E.upgradePrice('internet', 0)) // the goal is bought once affordable, never saved for
   const opts = ids.map(id => {
     lv[id]++; const gain = value() - base; lv[id]--
     const cost = E.upgradePrice(id, lv[id])
-    return { id, cost, payback: id === 'teams' || id === 'dc' ? 0 : cost / Math.max(gain, 1e-9) }
+    return { id, cost, payback: id === 'teams' || id === 'dc' || id === 'internet' ? 0 : cost / Math.max(gain, 1e-9) }
   }).sort((a, b) => a.payback - b.payback)
   const best = opts[0]
   if (best && money >= best.cost) {
     money -= best.cost; lv[best.id]++; buys.push(t)
     if (best.id === 'teams') report(l2, 'Teams bought'), buys.push(t)
     if (best.id === 'dc') { report(l3, 'Layer 3 done (datacenter bought)'); l4 = t }
-    console.log(`${(t / 60).toFixed(1).padStart(5)}m  ${best.id.padEnd(7)} teams=${teams()} sprint=${lv.sprint} mkt=${lv.mkt} cicd=${lv.cicd} racks=${1 + lv.rack} gpu=${lv.gpu} users=${E.fmt(users)}  $${E.fmt(rates().money)}/s`)
+    console.log(`${(t / 60).toFixed(1).padStart(5)}m  ${best.id.padEnd(8)} teams=${teams()} sprint=${lv.sprint} mkt=${lv.mkt} racks=${1 + lv.rack} gpu=${lv.gpu} ctx=${lv.context} acq=${lv.acq} tier=${tier} users=${E.fmt(users)}  $${E.fmt(rates().money)}/s`)
   }
 }
-report(l4, tier === E.MODEL_COUNT ? 'Layer 4 done (AGI)' : 'Ran out of time in layer 4')
+report(l5, lv.internet ? 'Layer 5 done (bought the Internet)' : `Ran out of time (tier ${tier}, acq ${lv.acq})`)

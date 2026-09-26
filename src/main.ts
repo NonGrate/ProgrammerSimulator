@@ -1,10 +1,12 @@
 import * as E from './economy.ts'
-import { s, save, fresh, $, el, sfx, toast, stats, setHtml } from './game.ts'
+import { s, save, fresh, $, el, sfx, toast, stats, setHtml, ngpMult } from './game.ts'
 import { t, tl, setLang, applyStatic, LANGS, type StrKey } from './i18n.ts'
 import { initSessions, addSession, layoutSessions, updateGhost, tickSessions } from './sessions.ts'
 import { initTeams, addTeam, layoutTeams, tickTeams, teamsWaiting, updateTeamGhost } from './teams.ts'
 import { initDc, addRack, tickDc, dcAlert, updateRackGhost } from './datacenter.ts'
 import { initStart, codSvg } from './start.ts'
+import { initTakeover, refreshTakeover } from './takeover.ts'
+import { COMPANIES } from './lines.ts'
 
 setLang(s.lang) // before anything builds text
 applyStatic()
@@ -12,11 +14,11 @@ let rate = 0 // smoothed $/sec for the HUD
 const away = (Date.now() - s.savedAt) / 1000 // measured now, paid out when the player presses Start
 
 // ---------- views ----------
-type View = 'grid' | 'teams' | 'dc'
+type View = 'grid' | 'teams' | 'dc' | 'takeover'
 let view: View = 'grid'
 function show(v: View) {
   view = v
-  for (const id of ['grid', 'teams', 'dc'] as const) $(id).hidden = id !== v
+  for (const id of ['grid', 'teams', 'dc', 'takeover'] as const) $(id).hidden = id !== v
   document.querySelectorAll<HTMLButtonElement>('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.v === v))
 }
 document.querySelectorAll<HTMLButtonElement>('#tabs button').forEach(b => b.onclick = () => show(b.dataset.v as View))
@@ -28,6 +30,14 @@ function enterTeams() {
 function enterDc() {
   initDc($('dc'), agi, () => buy('rack')); $('tabs').hidden = false; show('dc')
 }
+let takeoverReady = false
+function enterTakeover() {
+  if (takeoverReady) return
+  takeoverReady = true
+  initTakeover($('takeover'), () => buy('acq'), () => buy('internet'))
+  document.querySelector<HTMLElement>('#tabs [data-v="takeover"]')!.hidden = false
+  buildShop()
+}
 function agi() {
   if (s.agi) return
   s.agi = true; save()
@@ -35,7 +45,22 @@ function agi() {
   $('agi-time').textContent = t('agi.duration', { h: Math.floor(s.played / 3600), m: Math.floor((s.played % 3600) / 60) })
   $<HTMLDialogElement>('agi').showModal()
 }
-$('agi-close').onclick = () => $<HTMLDialogElement>('agi').close()
+$('agi-close').onclick = () => {
+  $<HTMLDialogElement>('agi').close()
+  enterTakeover(); show('takeover'); toast(t('toast.takeover'))
+}
+
+// ---------- the final goal: bought the Internet ----------
+function ending() {
+  $('end-bonus').textContent = t('end.bonus', { mult: E.fmt(E.NGP_MULT ** (s.ngp + 1)) })
+  $<HTMLDialogElement>('end').showModal()
+}
+$('end-no').onclick = () => $<HTMLDialogElement>('end').close()
+$('end-yes').onclick = () => {
+  // New Game+: start over, keep settings and the easter egg, and earn ×2 more per finished run
+  const keep = { sound: s.sound, theme: s.theme, lang: s.lang, cod: s.cod, ngp: s.ngp + 1 }
+  Object.assign(s, fresh(), keep); save(); sessionStorage.removeItem('clodcod-started'); location.reload()
+}
 
 // ---------- shop ----------
 type ItemId = E.UpgradeId | 'window'
@@ -49,6 +74,8 @@ const AFTER: Partial<Record<E.UpgradeId, () => void>> = {
   cicd: layoutTeams,
   dc: () => { enterDc(); toast(t('toast.dc')) },
   rack: () => addRack(s.lv.rack),
+  acq: () => { refreshTakeover(); toast(t('toast.acq', { company: COMPANIES[s.lv.acq - 1][1], joke: tl('companyLines')[s.lv.acq - 1] })) },
+  internet: () => { refreshTakeover(); ending() },
 }
 const items = {
   window: { desc: () => `${t('upd.window')} · ${s.windows}/${E.MAX_WINDOWS}`,
@@ -57,13 +84,16 @@ const items = {
 } as Record<ItemId, Item>
 for (const id of Object.keys(E.UPGRADES) as E.UpgradeId[]) {
   const u = E.UPGRADES[id]
-  items[id] = { desc: () => `${t(`upd.${id}`)}${u.max > 1 ? ` · ${t('shop.lv')} ${s.lv[id]}` : ''}`,
-                price: () => E.upgradePrice(id, s.lv[id]), maxed: () => s.lv[id] >= u.max,
-                locked: () => E.locked(id, s.lv, s.windows), buy: () => { s.lv[id]++; AFTER[id]?.() } }
+  const text = () => id !== 'acq' ? t(`upd.${id}`)
+    : s.lv.acq < E.COMPANY_COUNT ? t('upd.acq', { company: COMPANIES[s.lv.acq][1] }) : t('upd.acqDone')
+  items[id] = { desc: () => `${text()}${u.max > 1 ? ` · ${t('shop.lv')} ${s.lv[id]}` : ''}`,
+                price: () => E.upgradePrice(id, s.lv[id]), maxed: () => s.lv[id] >= E.maxLevel(id, s.tier),
+                locked: () => E.locked(id, s.lv, s.windows, s.tier), buy: () => { s.lv[id]++; AFTER[id]?.() } }
 }
 
-const UNLOCKS = ['agents', 'teams', 'dc'] as const
+const UNLOCKS = ['agents', 'teams', 'dc', 'internet'] as const
 const SECTIONS: [StrKey, ItemId[], () => boolean][] = [
+  ['shop.takeover', ['acq'], () => s.tier >= E.MODEL_COUNT],
   ['shop.dc', ['rack', 'gpu', 'cooling'], () => !!s.lv.dc],
   ['shop.teams', ['team', 'sprint', 'mkt', 'cicd', 'staging'], () => !!s.lv.teams],
   ['shop.subagents', ['slots', 'aspeed', 'aauto'], () => !!s.lv.agents],
@@ -89,10 +119,8 @@ function buildShop() {
     if (!visible() || !shown.length) continue
     shop.append(el('h3', '', t(title))); shown.forEach(add)
   }
-  shop.append(el('h3', '', t('shop.next')))
   const next = UNLOCKS.find(id => !s.lv[id])
-  if (next) add(next)
-  else shop.append(Object.assign(el('div', 'item locked'), { innerHTML: `<div>AGI<small>${t('shop.agiDesc', { model: tl('models').at(-1)! })}</small></div><span class="price">🐟</span>` }))
+  if (next) { shop.append(el('h3', '', t('shop.next'))); add(next) }
 }
 
 function refreshShop() {
@@ -112,9 +140,11 @@ function refreshShop() {
 function refreshHud() {
   const stat = (k: StrKey, v: string) => `<div class="stat">${t(k)} <span>${v}</span></div>`
   const parts = [stat('hud.perSec', '$' + E.fmt(rate))]
-  if (!s.lv.teams) parts.push(stat('hud.perProceed', '$' + E.fmt(E.clickValue(s.lv.context))), stat('hud.sessions', `${s.windows}/${E.MAX_WINDOWS}`))
+  if (!s.lv.teams) parts.push(stat('hud.perProceed', '$' + E.fmt(E.clickValue(s.lv.context) * ngpMult())), stat('hud.sessions', `${s.windows}/${E.MAX_WINDOWS}`))
   else parts.push(stat('hud.users', E.fmt(s.users)), stat('hud.teams', `${1 + s.lv.team}/${E.MAX_TEAMS}`))
-  if (s.lv.dc) parts.push(stat('hud.model', s.tier ? `Clod ${tl('models')[s.tier - 1]} ×${E.fmt(E.modelMult(s.tier))}` : t('hud.noModel')))
+  const model = tl('models')[Math.min(s.tier, E.MODEL_COUNT) - 1], ft = s.tier - E.MODEL_COUNT
+  if (s.lv.dc) parts.push(stat('hud.model', s.tier ? `Clod ${model}${ft > 0 ? ` +${ft}` : ''} ×${E.fmt(E.modelMult(s.tier))}` : t('hud.noModel')))
+  if (s.ngp) parts.push(`<div class="stat">NG+${s.ngp} <span>×${E.fmt(ngpMult())}</span></div>`)
   $('stats').innerHTML = parts.join('')
   // tabs blink when the hidden view needs a click
   document.querySelector('#tabs [data-v="teams"]')!.classList.toggle('alert', view !== 'teams' && teamsWaiting() > 0)
@@ -191,7 +221,7 @@ function codMode() {
 // ---------- loop ----------
 function offline(seconds: number) {
   // ponytail: no offline compute/training, only automated income
-  const gain = E.autoIncome(s.lv, s.users) * E.modelMult(s.tier) * Math.min(seconds, E.OFFLINE_CAP) * E.OFFLINE_RATE
+  const gain = E.autoIncome(s.lv, s.users) * E.globalMult(s.lv, s.tier) * ngpMult() * Math.min(seconds, E.OFFLINE_CAP) * E.OFFLINE_RATE
   if (gain < 1) return
   s.money += gain
   if (seconds > 60) toast(t('toast.offline', { gain: E.fmt(gain) }))
@@ -219,7 +249,7 @@ function start() {
   sessionStorage.setItem('clodcod-started', '1') // language reloads skip the start screen
   offline(away)
   refreshShop(); refreshHud()
-  setInterval(() => { refreshShop(); refreshHud() }, 200)
+  setInterval(() => { refreshShop(); refreshHud(); refreshTakeover() }, 200)
   setInterval(save, 5000)
   last = performance.now()
   requestAnimationFrame(frame)
@@ -228,6 +258,7 @@ function start() {
 if (s.lv.teams) { initTeams($('teams'), () => buy('team')); show('teams') }
 else { initSessions($('grid'), () => buy('window')); show('grid') }
 if (s.lv.dc) enterDc()
+if (s.tier >= E.MODEL_COUNT) enterTakeover()
 buildShop()
 applyTheme()
 addEventListener('beforeunload', save)

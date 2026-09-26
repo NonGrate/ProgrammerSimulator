@@ -34,6 +34,16 @@ export const TRAIN_GROWTH = 4
 export const MODEL_MULT = 3
 export const MODEL_COUNT = 10 // names live in the locales
 
+// Layer 5 (after AGI): training continues as fine-tunes, Clod buys the tech industry, and the final goal is the Internet.
+export const FINETUNE_MULT = 1.5 // per fine-tune after the last model
+export const ACQ_MULT = 3 // per acquisition
+export const COMPANY_COUNT = 10
+export const NGP_MULT = 2 // New Game+: all income ×2 per finished run
+// Extra levels unlocked by AGI, so the post-game still has upgrades to buy
+export const AGI_BONUS: Partial<Record<string, number>> = { context: 10, mkt: 10, gpu: 10, sprint: 5 }
+// ...priced on the post-AGI scale, otherwise the old curves make them pocket change
+export const BONUS_LEVEL = { base: 1e23, growth: 6 }
+
 export const WINDOW = { base: 10, growth: 1.5 }
 export const UPGRADES = {
   model:   { base: 20,   growth: 2,    max: 10 },
@@ -54,6 +64,8 @@ export const UPGRADES = {
   rack:    { base: 2e15, growth: 1.6,  max: MAX_RACKS - 1 },
   gpu:     { base: 5e15, growth: 3,    max: 20 },
   cooling: { base: 1e17, growth: 1,    max: 1 },
+  acq:     { base: 1e25, growth: 15,   max: COMPANY_COUNT },
+  internet:{ base: 1e35, growth: 1,    max: 1 },
 } as const
 export type UpgradeId = keyof typeof UPGRADES
 export type Levels = Record<UpgradeId, number>
@@ -61,7 +73,9 @@ export type Levels = Record<UpgradeId, number>
 // Geometric price curve, same shape as Cookie Clicker (1.15) / AdVenture Capitalist (1.07-1.15)
 export const price = (base: number, growth: number, owned: number) => Math.ceil(base * growth ** owned)
 export const windowPrice = (owned: number) => price(WINDOW.base, WINDOW.growth, owned) // you start with one free session
-export const upgradePrice = (id: UpgradeId, lvl: number) => price(UPGRADES[id].base, UPGRADES[id].growth, lvl)
+export const upgradePrice = (id: UpgradeId, lvl: number) => lvl >= UPGRADES[id].max
+  ? price(BONUS_LEVEL.base, BONUS_LEVEL.growth, lvl - UPGRADES[id].max)
+  : price(UPGRADES[id].base, UPGRADES[id].growth, lvl)
 
 export const thinkTime = (modelLvl: number) => THINK_BASE * 0.85 ** modelLvl
 export const clickValue = (contextLvl: number) => 1.75 ** contextLvl
@@ -89,8 +103,9 @@ export function income(lv: Levels, windows: number, human = true) {
 }
 
 // Things you can't buy yet (not the same as maxed out). Returns a lock reason key for the locales.
-export type LockReason = 'sessions' | 'slots' | 'teams' | 'moreSessions' | 'moreTeams' | 'locked'
-export function locked(id: UpgradeId, lv: Levels, windows: number): LockReason | false {
+export type LockReason = 'sessions' | 'slots' | 'teams' | 'moreSessions' | 'moreTeams' | 'locked' | 'agi'
+export function locked(id: UpgradeId, lv: Levels, windows: number, tier = 0): LockReason | false {
+  if ((id === 'acq' || id === 'internet') && tier < MODEL_COUNT) return 'agi'
   const need: Partial<Record<UpgradeId, [boolean, LockReason]>> = {
     agents: [windows < MAX_WINDOWS, 'sessions'],
     teams: [lv.slots < UPGRADES.slots.max, 'slots'],
@@ -117,7 +132,10 @@ export const shipValue = (lv: Levels, users: number) => teamPower(lv) * releaseT
 // Layer 4
 export const compute = (racks: number, gpuLvl: number) => racks * 2 ** gpuLvl // per second, all racks running
 export const trainCost = (tier: number) => TRAIN_BASE * TRAIN_GROWTH ** tier
-export const modelMult = (tier: number) => MODEL_MULT ** tier
+export const modelMult = (tier: number) => MODEL_MULT ** Math.min(tier, MODEL_COUNT) * FINETUNE_MULT ** Math.max(0, tier - MODEL_COUNT)
+export const maxLevel = (id: UpgradeId, tier: number) => UPGRADES[id].max + (tier >= MODEL_COUNT ? AGI_BONUS[id] ?? 0 : 0)
+// Everything that multiplies all income: deployed models, fine-tunes, acquisitions, New Game+
+export const globalMult = (lv: Levels, tier: number, ngp = 0) => modelMult(tier) * ACQ_MULT ** lv.acq * NGP_MULT ** ngp
 
 // Offline: only fully automated work counts.
 export function autoIncome(lv: Levels, users = 0) {
@@ -126,7 +144,7 @@ export function autoIncome(lv: Levels, users = 0) {
   return Math.min(lv.cicd, 1 + lv.team) * shipValue(lv, users) / cycle
 }
 
-const SUFFIX = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc']
+const SUFFIX = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Ud', 'Dd', 'Td']
 export function fmt(n: number): string {
   if (n < 1000) return n < 10 && n % 1 ? n.toFixed(2) : Math.floor(n).toString()
   const i = Math.min(Math.floor(Math.log10(n) / 3), SUFFIX.length - 1)

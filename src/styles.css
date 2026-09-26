@@ -217,6 +217,7 @@ select:focus { outline: 1px solid var(--g2); }
   #grid, #teams, .racks { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: 230px; }
   #teams { grid-auto-rows: 300px; }
   .racks { grid-auto-rows: 170px; }
+  .companies { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: 190px !important; } /* base rule comes later in the file */
   #dc { gap: 8px; }
   .win { font-size: 11px; } .body { padding: 8px; }
   .ask button { padding: 5px 9px; margin-right: 4px; }
@@ -240,3 +241,15 @@ select:focus { outline: 1px solid var(--g2); }
   .welcome { font-size: 13px; } .w-title { font-size: 16px; }
   .fish { font-size: 32px; }
 }
+
+/* Takeover (layer 5) */
+#takeover { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.goal .yes { align-self: flex-start; padding: 6px 16px; border-radius: 6px; font-weight: 700; }
+.companies { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 1fr; gap: 10px; min-height: 0; }
+.company .body { justify-content: space-between; gap: 6px; }
+.company .product { font-size: 17px; white-space: normal; }
+.company .body p { white-space: normal; }
+.company .yes { border-radius: 6px; padding: 5px 12px; font-weight: 700; }
+.company .yes:disabled { opacity: .45; cursor: default; animation: none; }
+.company.owned { border-color: var(--g2); }
+.company.future { opacity: .4; }

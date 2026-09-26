@@ -5,12 +5,13 @@ import { detectLang } from './i18n.ts'
 export type Save = {
   money: number; windows: number; lv: E.Levels; users: number; tier: number; progress: number
   sound: boolean; theme: string; lang: string; cod: boolean; agi: boolean; played: number; savedAt: number
+  ngp: number // finished runs (New Game+)
 }
 const KEY = 'clodcod-save'
 const zeroLevels = () => Object.fromEntries(Object.keys(E.UPGRADES).map(k => [k, 0])) as E.Levels
 export const fresh = (): Save => ({
   money: 0, windows: 1, lv: zeroLevels(), users: 0, tier: 0, progress: 0,
-  sound: true, theme: 'green', lang: detectLang(), cod: false, agi: false, played: 0, savedAt: Date.now(),
+  sound: true, theme: 'green', lang: detectLang(), cod: false, agi: false, played: 0, savedAt: Date.now(), ngp: 0,
 })
 const loaded = JSON.parse(localStorage.getItem(KEY) ?? '{}')
 export const s: Save = { ...fresh(), ...loaded, lv: { ...zeroLevels(), ...loaded.lv } } // merge so old saves get new upgrades
@@ -76,9 +77,11 @@ export function hurt(e: HTMLElement) {
   hurtTimers.set(e, setTimeout(() => e.classList.remove('hurt'), 1500))
 }
 
-// Every $ goes through here so the $/sec readout sees it.
+// Every $ goes through here so the $/sec readout sees it, and New Game+ applies to all of it.
 export const stats = { earned: 0 }
+export const ngpMult = () => E.NGP_MULT ** s.ngp
 export function earn(amount: number, at: HTMLElement, extra = '') {
+  amount *= ngpMult()
   s.money += amount; stats.earned += amount
   floatText(`+$${E.fmt(amount)}${extra}`, at)
 }
