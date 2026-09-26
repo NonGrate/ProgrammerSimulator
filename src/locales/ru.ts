@@ -8,6 +8,7 @@ export const ru: Dict = {
   'hud.users': 'пользователи',
   'hud.teams': 'команды',
   'hud.model': 'модель',
+  'hud.total': "общий множитель",
   'hud.noModel': 'пока нет',
   'tab.teams': 'Команды',
   'tab.dc': 'Датацентр',

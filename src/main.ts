@@ -144,7 +144,10 @@ function refreshHud() {
   else parts.push(stat('hud.users', E.fmt(s.users)), stat('hud.teams', `${1 + s.lv.team}/${E.MAX_TEAMS}`))
   const model = tl('models')[Math.min(s.tier, E.MODEL_COUNT) - 1], ft = s.tier - E.MODEL_COUNT
   if (s.lv.dc) parts.push(stat('hud.model', s.tier ? `Clod ${model}${ft > 0 ? ` +${ft}` : ''} ×${E.fmt(E.modelMult(s.tier))}` : t('hud.noModel')))
-  if (s.ngp) parts.push(`<div class="stat">NG+${s.ngp} <span>×${E.fmt(ngpMult())}</span></div>`)
+  $('ngp').hidden = !s.ngp; $('ngp').textContent = `NG+${s.ngp}` // its ×2 per run is part of the total multiplier
+  // everything that multiplies all income: models, fine-tunes, acquisitions, New Game+
+  const total = E.globalMult(s.lv, s.tier) * ngpMult()
+  if (total > 1) parts.push(stat('hud.total', `×${E.fmt(total)}`))
   $('stats').innerHTML = parts.join('')
   // tabs blink when the hidden view needs a click
   document.querySelector('#tabs [data-v="teams"]')!.classList.toggle('alert', view !== 'teams' && teamsWaiting() > 0)

@@ -8,6 +8,7 @@ export const en = {
   'hud.users': 'users',
   'hud.teams': 'teams',
   'hud.model': 'model',
+  'hud.total': "total multiplier",
   'hud.noModel': 'none yet',
   'tab.teams': 'Teams',
   'tab.dc': 'Datacenter',

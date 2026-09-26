@@ -33,7 +33,8 @@ button { font: inherit; cursor: pointer; }
 /* HUD */
 .hud { display: flex; gap: 24px; align-items: center; padding: 10px 16px; background: var(--panel);
        border: 1px solid var(--line); border-radius: 10px; }
-.brand { display: flex; gap: 24px; align-items: baseline; } /* title and money share one text line */
+.brand { display: flex; gap: 24px; align-items: baseline; flex-shrink: 0; white-space: nowrap; } /* title and money share one text line and never squeeze */
+.ngp { margin-left: -16px; font-size: 11px; font-weight: 700; color: #04110a; background: var(--g); border-radius: 4px; padding: 1px 5px; align-self: center; }
 .logo { color: var(--g); font-weight: 700; font-size: 20px; letter-spacing: 1px; text-shadow: 0 0 10px var(--glow); }
 .money { font-size: 26px; font-weight: 700; color: var(--g); text-shadow: 0 0 12px var(--glow); min-width: 170px; }
 .stat { color: var(--dim); } .stat span { color: var(--txt); }
@@ -42,7 +43,8 @@ button { font: inherit; cursor: pointer; }
 .icon:hover { color: var(--g); border-color: var(--g2); }
 
 main { flex: 1; display: flex; gap: 12px; min-height: 0; }
-#stats { display: flex; gap: 24px; }
+#stats { display: flex; flex-wrap: wrap; gap: 2px 24px; } /* if it doesn't fit, whole stats wrap, never label vs value */
+.stat { white-space: nowrap; }
 #stage { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; } /* game area left of the shop */
 #stage > .view { min-height: 0; }
 #tabs { display: flex; gap: 6px; align-self: center; } /* centered over the game area, not the window */
@@ -212,12 +214,13 @@ select:focus { outline: 1px solid var(--g2); }
   .icon { width: 32px; height: 32px; }
   #stats { order: 3; width: 100%; flex-wrap: wrap; gap: 2px 14px; font-size: 11px; }
   main { display: block; }
-  #tabs { width: 100%; } #tabs button { flex: 1; min-width: 0; }
-  /* grids: 2 columns and fixed row heights, the page scrolls instead of squeezing */
-  #grid, #teams, .racks { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: 230px; }
-  #teams { grid-auto-rows: 300px; }
+  #tabs { width: 100%; } #tabs button { flex: 1 1 auto; min-width: 0; padding: 6px 8px; font-size: 12px; } /* long labels take the space they need */
+  /* one full-width column for views with messages (they're the fun), the page scrolls instead of squeezing */
+  #grid, #teams { grid-template-columns: 1fr !important; grid-auto-rows: 230px; }
+  .racks { grid-template-columns: repeat(2, 1fr) !important; } /* short text, 2 columns keep 16 racks compact */
+  #teams { grid-auto-rows: 270px; }
   .racks { grid-auto-rows: 170px; }
-  .companies { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: 190px !important; } /* base rule comes later in the file */
+  .companies { grid-template-columns: 1fr !important; grid-auto-rows: 170px !important; } /* base rule comes later in the file */
   #dc { gap: 8px; }
   .win { font-size: 11px; } .body { padding: 8px; }
   .ask button { padding: 5px 9px; margin-right: 4px; }

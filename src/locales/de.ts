@@ -7,6 +7,7 @@ export const de: Dict = {
   'hud.users': 'Nutzer',
   'hud.teams': 'Teams',
   'hud.model': 'Modell',
+  'hud.total': "Gesamtmultiplikator",
   'hud.noModel': 'noch keins',
   'tab.teams': 'Teams',
   'tab.dc': 'Rechenzentrum',

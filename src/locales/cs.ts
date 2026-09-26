@@ -8,6 +8,7 @@ export const cs: Dict = {
   'hud.users': 'uživatelé',
   'hud.teams': 'týmy',
   'hud.model': 'model',
+  'hud.total': "celkový násobitel",
   'hud.noModel': 'zatím žádný',
   'tab.teams': 'Týmy',
   'tab.dc': 'Datacentrum',
