@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Programmer Simulator — UI mockups</title>
+<style>
+  :root {
+    --bg: #05090a; --panel: #0b1412; --line: #1a3a2e; --g: #3dff8b; --g2: #1fae5c;
+    --dim: #5f8f76; --warn: #ffb547; --bad: #ff5c6c; --txt: #c8f5da;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: radial-gradient(ellipse at top, #0d1f19, var(--bg) 70%); color: var(--txt);
+         font: 13px/1.5 var(--mono); min-height: 100vh; }
+  nav { display: flex; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); align-items: center; }
+  nav b { color: var(--g); margin-right: 16px; }
+  nav button { background: transparent; color: var(--dim); border: 1px solid var(--line); border-radius: 6px;
+               padding: 6px 12px; font: inherit; cursor: pointer; }
+  nav button.on { color: var(--bg); background: var(--g); border-color: var(--g); }
+  .variant { display: none; padding: 16px; height: calc(100vh - 55px); }
+  .variant.on { display: flex; flex-direction: column; gap: 12px; }
+
+  /* shared pieces */
+  .hud { display: flex; gap: 24px; align-items: center; padding: 10px 16px; background: var(--panel);
+         border: 1px solid var(--line); border-radius: 10px; }
+  .money { font-size: 26px; color: var(--g); text-shadow: 0 0 12px #3dff8b88; font-weight: 700; }
+  .stat { color: var(--dim); } .stat span { color: var(--txt); }
+  .win { background: linear-gradient(180deg, #0e1a16, #08100d); border: 1px solid var(--line); border-radius: 10px;
+         display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 0 1px #000, 0 8px 30px #0008; }
+  .win.waiting { border-color: var(--g2); box-shadow: 0 0 18px #3dff8b33; }
+  .bar { display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: #0a1411; border-bottom: 1px solid var(--line);
+         color: var(--dim); font-size: 11px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #1e3b30; }
+  .bar .title { margin-left: 6px; flex: 1; }
+  .tag { padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line); font-size: 10px; }
+  .tag.auto { color: var(--g); border-color: var(--g2); }
+  .body { padding: 10px 12px; flex: 1; overflow: hidden; }
+  .body p { margin: 0 0 2px; } .body .m { color: var(--dim); } .body .ok { color: var(--g); }
+  .body .tool { color: #7fd3ff; }
+  .ask { margin-top: 8px; padding: 8px 10px; border: 1px solid var(--g2); border-radius: 8px; background: #0f2219; }
+  .ask.danger { border-color: var(--bad); background: #2a0f13; }
+  .ask.danger .q { color: var(--bad); }
+  .proceed { margin-top: 6px; display: inline-flex; align-items: center; gap: 8px; background: var(--g); color: #03140a;
+             border: 0; border-radius: 6px; padding: 6px 14px; font: 700 12px var(--mono); cursor: pointer;
+             animation: pulse 1.2s infinite; }
+  .proceed.no { background: transparent; color: var(--dim); border: 1px solid var(--line); animation: none; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 6px #3dff8b22; } }
+  .progress { height: 3px; background: #10231b; } .progress i { display: block; height: 100%; background: var(--g); width: 40%;
+              animation: grow 3s linear infinite; }
+  @keyframes grow { from { width: 0 } to { width: 100% } }
+  .cursor::after { content: "▋"; color: var(--g); animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0 } }
+  .agents { margin-top: 6px; padding-left: 8px; border-left: 1px dashed var(--line); }
+  .agents p { color: var(--dim); } .agents .mini { font-size: 10px; padding: 1px 8px; background: var(--g); color: #03140a;
+              border-radius: 4px; margin-left: 6px; }
+  .shop { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; overflow: auto; }
+  .shop h3 { margin: 4px 0 10px; font-size: 11px; color: var(--dim); letter-spacing: 2px; }
+  .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border: 1px solid var(--line);
+          border-radius: 8px; margin-bottom: 6px; }
+  .item.can { border-color: var(--g2); } .item.can .price { color: var(--g); }
+  .item.locked { opacity: .4; }
+  .item small { display: block; color: var(--dim); font-size: 10px; }
+  .price { color: var(--dim); font-weight: 700; }
+  .note { color: var(--dim); font-size: 11px; }
+
+  /* A: tiled */
+  #A .main { display: flex; gap: 12px; flex: 1; min-height: 0; }
+  #A .grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 10px; }
+  #A .shop { width: 280px; }
+
+  /* B: desktop */
+  #B .desk { flex: 1; position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+             background: repeating-linear-gradient(0deg, transparent 0 3px, #3dff8b05 3px 4px), #060c0a; }
+  #B .win { position: absolute; width: 360px; height: 230px; }
+  #B .dock { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px;
+             padding: 8px; background: #0b1412ee; border: 1px solid var(--line); border-radius: 14px; backdrop-filter: blur(8px); }
+  #B .dock .item { margin: 0; flex-direction: column; min-width: 120px; align-items: flex-start; }
+  #B .hud { position: absolute; top: 14px; left: 14px; }
+
+  /* C: command center */
+  #C .main { display: flex; gap: 12px; flex: 1; min-height: 0; }
+  #C .shop { width: 300px; }
+  #C .center { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  #C .focus { flex: 1; } #C .focus .body { font-size: 14px; }
+  #C .strip { display: flex; gap: 8px; }
+  #C .thumb { flex: 1; height: 72px; padding: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+              font-size: 10px; color: var(--dim); cursor: pointer; }
+  #C .thumb.waiting { border-color: var(--g); color: var(--g); animation: pulse 1.2s infinite; }
+  #C .thumb.bad { border-color: var(--bad); color: var(--bad); }
+  #C .layers { display: flex; gap: 6px; } #C .layers span { padding: 4px 10px; border: 1px solid var(--line); border-radius: 20px; font-size: 11px; color: var(--dim); }
+  #C .layers span.on { color: var(--g); border-color: var(--g); }
+</style>
+</head>
+<body>
+<nav>
+  <b>&gt;_ mockups</b>
+  <button class="on" data-v="A">A · Tiled (tmux)</button>
+  <button data-v="B">B · Desktop (floating windows)</button>
+  <button data-v="C">C · Command center</button>
+  <span class="note" style="margin-left:auto">static mockups — buttons just animate</span>
+</nav>
+
+<!-- ============ A: TILED ============ -->
+<section id="A" class="variant on">
+  <div class="hud">
+    <div class="money">$1,284.50</div>
+    <div class="stat">per click <span>$4.20</span></div>
+    <div class="stat">per sec <span>$18.6</span></div>
+    <div class="stat">sessions <span>5 / ∞</span></div>
+    <div class="stat" style="margin-left:auto">usage limit <span>████████░░ 78%</span></div>
+  </div>
+  <div class="main">
+    <div class="grid">
+      <div class="win waiting">
+        <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="title">session-1 · ~/todo-app</span><span class="tag">Pro</span></div>
+        <div class="body">
+          <p class="m">● Reading src/App.tsx</p>
+          <p class="tool">⏺ Edit(src/App.tsx) +12 −3</p>
+          <div class="ask"><p class="q">Do you want to make this edit?</p><button class="proceed">⏎ Yes, proceed</button> <button class="proceed no">No</button></div>
+        </div>
+      </div>
+      <div class="win">
+        <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="title">session-2 · ~/api</span><span class="tag auto">AUTO</span></div>
+        <div class="progress"><i></i></div>
+        <div class="body"><p class="m">● Thinking…</p><p class="tool">⏺ Bash(npm test)</p><p class="ok">✓ 42 passed</p><p class="cursor"></p></div>
+      </div>
+      <div class="win waiting">
+        <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="title">session-3 · ~/infra</span><span class="tag">Max</span></div>
+        <div class="body">
+          <p class="m">● Orchestrating 3 agents</p>
+          <div class="agents">
+            <p>├─ agent:tests ● running</p>
+            <p>├─ agent:docs ● waiting <span class="mini">⏎</span></p>
+            <p>└─ agent:refactor ✓ done</p>
+          </div>
+          <div class="ask"><p class="q">Merge agent results?</p><button class="proceed">⏎ Yes, proceed</button></div>
+        </div>
+      </div>
+      <div class="win waiting">
+        <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="title">session-4 · ~/legacy</span><span class="tag">Pro</span></div>
+        <div class="body">
+          <p class="tool">⏺ Bash(rm -rf ./node_modules /)</p>
+          <div class="ask danger"><p class="q">⚠ Allow this command?</p><button class="proceed no">Yes</button> <button class="proceed">⏎ No, and tell Claude</button></div>
+        </div>
+      </div>
+      <div class="win">
+        <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="title">session-5 · ~/blog</span><span class="tag auto">AUTO</span></div>
+        <div class="progress"><i></i></div>
+        <div class="body"><p class="m">● Writing README.md</p><p class="cursor"></p></div>
+      </div>
+      <div class="win" style="border-style:dashed;align-items:center;justify-content:center;color:var(--dim)">+ new session · $2,150</div>
+    </div>
+    <div class="shop">
+      <h3>SUBSCRIPTIONS</h3>
+      <div class="item"><div>New session<small>+1 window</small></div><span class="price">$2,150</span></div>
+      <h3>UPGRADES</h3>
+      <div class="item can"><div>Faster model<small>−20% think time</small></div><span class="price">$900</span></div>
+      <div class="item can"><div>Auto-accept edits<small>auto-click 1 window</small></div><span class="price">$1,100</span></div>
+      <div class="item"><div>Permission allowlist<small>auto-reject danger prompts</small></div><span class="price">$5,000</span></div>
+      <div class="item"><div>Subagents<small>unlock layer 2</small></div><span class="price">$25k</span></div>
+      <div class="item locked"><div>??? <small>layer 3</small></div><span class="price">—</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ B: DESKTOP ============ -->
+<section id="B" class="variant">
+  <div class="desk">
+    <div class="hud"><div class="money">$1,284.50</div><div class="stat">/s <span>$18.6</span></div></div>
+    <div class="win waiting" style="left:60px;top:90px">
+      <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="title">session-1 · ~/todo-app</span></div>
+      <div class="body"><p class="m">● Reading src/App.tsx</p><p class="tool">⏺ Edit(src/App.tsx) +12 −3</p>
+        <div class="ask"><p class="q">Do you want to make this edit?</p><button class="proceed">⏎ Yes, proceed</button></div></div>
+    </div>
+    <div class="win" style="left:340px;top:170px;z-index:2">
+      <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="title">session-2 · ~/api</span><span class="tag auto">AUTO</span></div>
+      <div class="progress"><i></i></div>
+      <div class="body"><p class="m">● Thinking…</p><p class="tool">⏺ Bash(npm test)</p><p class="ok">✓ 42 passed</p><p class="cursor"></p></div>
+    </div>
+    <div class="win waiting" style="left:700px;top:70px">
+      <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="title">session-3 · ~/infra</span></div>
+      <div class="body"><p class="m">● Orchestrating 3 agents</p>
+        <div class="agents"><p>├─ agent:tests ● running</p><p>├─ agent:docs ● waiting <span class="mini">⏎</span></p><p>└─ agent:refactor ✓ done</p></div></div>
+    </div>
+    <div class="win waiting" style="left:620px;top:300px;z-index:3">
+      <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="title">session-4 · ~/legacy</span></div>
+      <div class="body"><p class="tool">⏺ Bash(rm -rf ./node_modules /)</p>
+        <div class="ask danger"><p class="q">⚠ Allow this command?</p><button class="proceed no">Yes</button> <button class="proceed">⏎ No</button></div></div>
+    </div>
+    <div class="dock">
+      <div class="item"><div>New session</div><span class="price">$2,150</span></div>
+      <div class="item can"><div>Faster model</div><span class="price">$900</span></div>
+      <div class="item can"><div>Auto-accept</div><span class="price">$1,100</span></div>
+      <div class="item"><div>Subagents</div><span class="price">$25k</span></div>
+      <div class="item locked"><div>???</div><span class="price">—</span></div>
+    </div>
+  </div>
+  <p class="note">Windows are draggable and overlap — chaos is part of the fun once you have 10+. Gets messy late game; needs an "auto-tile" button.</p>
+</section>
+
+<!-- ============ C: COMMAND CENTER ============ -->
+<section id="C" class="variant">
+  <div class="hud">
+    <div class="money">$1,284.50</div>
+    <div class="stat">/click <span>$4.20</span></div><div class="stat">/s <span>$18.6</span></div>
+    <div class="layers" style="margin-left:auto"><span class="on">1 · Sessions</span><span class="on">2 · Agents</span><span>3 · ???</span></div>
+  </div>
+  <div class="main">
+    <div class="shop">
+      <h3>SUBSCRIPTIONS</h3>
+      <div class="item"><div>New session ×5<small>next: $2,150 (×1.15 each)</small></div><span class="price">$2,150</span></div>
+      <h3>MODEL</h3>
+      <div class="item can"><div>Faster model Lv3<small>think 2.4s → 1.9s</small></div><span class="price">$900</span></div>
+      <div class="item"><div>Bigger context<small>+50% $/click</small></div><span class="price">$3,000</span></div>
+      <h3>AUTOMATION</h3>
+      <div class="item can"><div>Auto-accept<small>2 / 5 windows</small></div><span class="price">$1,100</span></div>
+      <div class="item"><div>Permission allowlist<small>blocks danger prompts</small></div><span class="price">$5,000</span></div>
+      <h3>AGENTS</h3>
+      <div class="item"><div>+1 subagent slot<small>per session</small></div><span class="price">$25k</span></div>
+    </div>
+    <div class="center">
+      <div class="win focus waiting">
+        <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="title">session-3 · ~/infra — focused</span><span class="tag">Max</span></div>
+        <div class="body">
+          <p class="m">&gt; migrate the whole infra to kubernetes, make no mistakes</p>
+          <p class="m">● I'll split this into parallel tasks.</p>
+          <p class="tool">⏺ Task(agent:tests) · Task(agent:docs) · Task(agent:refactor)</p>
+          <div class="agents"><p>├─ agent:tests ● running ▓▓▓▓▓░░░</p><p>├─ agent:docs ● waiting <span class="mini">⏎ approve</span></p><p>└─ agent:refactor ✓ done (+$12.40)</p></div>
+          <div class="ask"><p class="q">Apply changes to 14 files?</p><button class="proceed">⏎ Yes, proceed</button> <button class="proceed no">No</button></div>
+        </div>
+      </div>
+      <div class="strip">
+        <div class="thumb waiting">session-1<br>⏎ waiting</div>
+        <div class="thumb">session-2<br>AUTO · thinking…</div>
+        <div class="thumb waiting">session-3<br>⏎ waiting</div>
+        <div class="thumb bad">session-4<br>⚠ danger prompt</div>
+        <div class="thumb">session-5<br>AUTO · writing</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+    document.querySelectorAll('nav button, .variant').forEach(e => e.classList.remove('on'));
+    b.classList.add('on'); document.getElementById(b.dataset.v).classList.add('on');
+  });
+</script>
+</body>
+</html>

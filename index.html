@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" data-theme="green">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clod Cod</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <header class="hud">
+    <div class="logo">✻ Clod Cod</div>
+    <div class="money" id="money">$0</div>
+    <div id="stats"></div>
+    <nav id="tabs" hidden><button data-v="teams">Teams</button><button data-v="dc">Datacenter</button></nav>
+    <button class="icon" id="open-settings" title="Settings">⚙</button>
+  </header>
+
+  <main>
+    <section id="grid" class="view"></section>
+    <section id="teams" class="view"></section>
+    <section id="dc" class="view"></section>
+    <aside class="shop" id="shop"></aside>
+  </main>
+
+  <dialog id="settings">
+    <h2>Settings</h2>
+    <label class="row"><input type="checkbox" id="sound" /> Sound</label>
+    <h3>THEME</h3>
+    <div id="themes"></div>
+    <div class="row end">
+      <button class="ghost danger-text" id="reset">Reset progress</button>
+      <button class="primary" id="close-settings">Done</button>
+    </div>
+  </dialog>
+
+  <dialog id="agi">
+    <h2>🐟 AGI achieved</h2>
+    <p>Clod Leviathan now clicks "proceed" for you. And for everyone else.</p>
+    <p>You are, technically, unemployed. Congratulations.</p>
+    <p class="dim">Time played: <span id="agi-time"></span></p>
+    <div class="row end"><span></span><button class="primary" id="agi-close">Keep clicking anyway</button></div>
+  </dialog>
+
+  <div id="toast"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
