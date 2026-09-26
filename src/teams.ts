@@ -2,7 +2,7 @@
 import * as E from './economy.ts'
 import { s, el, sfx, earn, hurt, floatText, ghostTile } from './game.ts'
 import { TEAM_NAMES, workText } from './lines.ts'
-import { t, tl } from './i18n.ts'
+import { t, tl, tp } from './i18n.ts'
 
 type Team = { root: HTMLElement; fill: HTMLElement; label: HTMLElement; log: HTMLElement; action: HTMLElement; tag: HTMLElement; pays: HTMLElement
               phase: 'build' | 'ship'; t: number; dur: number; next: number; version: number; friday: boolean }
@@ -47,13 +47,13 @@ function ship(tm: Team, yes: boolean, at: HTMLElement) {
   if (tm.friday && yes) {
     const lost = Math.floor(s.users * E.FRIDAY_PENALTY)
     s.users -= lost
-    log(tm, t('t.outage', { n: E.fmt(lost) }), 'err')
+    log(tm, tp('outage', { lost: E.fmt(lost) }), 'err')
     floatText(t('t.lostUsers', { n: E.fmt(lost) }), at, true); sfx.bad(); hurt(tm.root)
   } else {
     const users = E.usersPerShip(s.lv.mkt)
     earn(E.shipValue(s.lv, s.users) * E.modelMult(s.tier), at, t('t.gainUsers', { n: E.fmt(users) }))
     s.users += users
-    log(tm, tm.friday ? t('t.monShipped') : t('t.shipped', { v: ver(tm) }), 'ok')
+    log(tm, tm.friday ? tp('monShipped') : tp('shipped', { v: ver(tm) }), 'ok')
     sfx.ship()
   }
   build(tm)

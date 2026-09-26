@@ -19,9 +19,12 @@ export const detectLang = (): Lang => {
 }
 
 // Unknown placeholders are left alone, so lines.ts can still fill {file}/{n}/{pkg} afterwards.
-export const t = (k: StrKey, vars: Record<string, string | number> = {}) =>
-  cur[k].replace(/\{(\w+)\}/g, (m, v) => v in vars ? String(vars[v]) : m)
+type Vars = Record<string, string | number>
+const format = (s: string, vars: Vars) => s.replace(/\{(\w+)\}/g, (m, v) => v in vars ? String(vars[v]) : m)
+export const t = (k: StrKey, vars: Vars = {}) => format(cur[k], vars)
 export const tl = (k: Key<string[]>) => cur[k]
+// A random variant from a line pool, so repeated events don't always say the same thing
+export const tp = (k: Key<string[]>, vars: Vars = {}) => format(cur[k][Math.floor(Math.random() * cur[k].length)], vars)
 
 // Static text in index.html: <span data-i18n="settings.title">
 export const applyStatic = () =>

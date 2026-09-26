@@ -2,7 +2,7 @@
 import * as E from './economy.ts'
 import { s, el, sfx, earn, lose, hurt, ghostTile } from './game.ts'
 import { PROJECTS, AGENT_NAMES, agentRequest, prompt, workLine } from './lines.ts'
-import { t } from './i18n.ts'
+import { t, tp } from './i18n.ts'
 
 type Agent = { name: string; t: number; dur: number; askAt: number; wt: number; danger: boolean; cmd: string
                state: 'run' | 'wait' | 'done' | 'dead'; row: HTMLElement; last: string }
@@ -107,15 +107,15 @@ function resolve(w: Win, yes: boolean, at: HTMLElement) {
   w.body.querySelector('.ask')?.remove()
   if (w.prompt.danger && yes) {
     const loss = lose(E.DANGER_PENALTY, at)
-    line(w, t('s.oops', { loss: E.fmt(loss) }), 'err')
+    line(w, tp('oops', { loss: E.fmt(loss), id: 1000 + Math.floor(Math.random() * 9000) }), 'err')
     hurt(w.root)
   } else if (w.prompt.danger) {
-    line(w, t('s.goodCatch'), 'ok')
+    line(w, tp('goodCatch'), 'ok')
     earn(v * 2, at); sfx.good()
   } else if (yes) {
     earn(v, at); sfx.click()
   } else {
-    line(w, t('s.rejected'), 'err')
+    line(w, tp('rejected'), 'err')
   }
   think(w)
 }

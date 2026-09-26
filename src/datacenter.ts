@@ -2,7 +2,7 @@
 import * as E from './economy.ts'
 import { s, el, sfx, toast, floatText, ghostTile } from './game.ts'
 import { workText } from './lines.ts'
-import { t, tl } from './i18n.ts'
+import { t, tl, tp } from './i18n.ts'
 
 type Rack = { root: HTMLElement; big: HTMLElement; status: HTMLElement; action: HTMLElement; hot: boolean; ht: number; next: number }
 const racks: Rack[] = []
@@ -20,7 +20,7 @@ function cool(r: Rack, at: HTMLElement) {
 
 function overheat(r: Rack) {
   r.hot = true; r.ht = 0; r.root.classList.add('hot')
-  r.status.textContent = t('d.overheat')
+  r.status.textContent = tp('overheat')
   const b = el('button', 'yes', t('d.cool')); b.onclick = () => cool(r, b)
   r.action.append(b)
   if (!s.lv.cooling) sfx.alarm()
@@ -48,7 +48,7 @@ function deploy(at: HTMLElement) {
   floatText(t('d.incomeMult', { m: E.MODEL_MULT }), at); sfx.deploy()
   deployBox.innerHTML = ''
   if (s.tier === E.MODEL_COUNT) onAgi()
-  else toast(t('toast.deployed', { model: modelName(s.tier - 1), mult: E.fmt(E.modelMult(s.tier)) }))
+  else toast(`${t('toast.deployed', { model: modelName(s.tier - 1), mult: E.fmt(E.modelMult(s.tier)) })} ${tl('modelLines')[s.tier - 1]}`)
 }
 
 export const dcAlert = () => racks.some(r => r.hot) || !!deployBox?.firstChild

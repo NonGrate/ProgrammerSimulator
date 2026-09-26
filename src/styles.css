@@ -68,6 +68,7 @@ main { flex: 1; display: flex; gap: 12px; min-height: 0; }
 .body { flex: 1; padding: 10px 12px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
 .body p { flex-shrink: 0; margin: 0 0 2px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: fadein .2s; }
 .body p.tool { color: var(--tool); } .body p.ok { color: var(--g); } .body p.err { color: var(--bad); }
+.body p.ok, .body p.err, .log p { white-space: normal; } /* jokes wrap instead of losing the punchline */
 .body p.hi { color: var(--txt); }
 @keyframes fadein { from { opacity: 0; transform: translateY(4px) } }
 
@@ -106,7 +107,8 @@ main { flex: 1; display: flex; gap: 12px; min-height: 0; }
 .mini-sessions { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
 .mini-sessions i { height: 10px; border-radius: 2px; background: var(--g2); animation: blinky 2s infinite; }
 @keyframes blinky { 50% { background: var(--g); box-shadow: 0 0 6px var(--glow); } }
-.log { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+.log { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;
+       mask-image: linear-gradient(transparent, #000 28px); } /* old lines fade out instead of being sliced */
 .release { position: relative; height: 22px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: #060a09; flex-shrink: 0; }
 .release i { position: absolute; inset: 0 auto 0 0; width: 0; background: color-mix(in srgb, var(--g) 35%, transparent); }
 .release span { position: relative; padding: 0 8px; font-size: 11px; line-height: 20px; color: var(--txt); }
@@ -118,6 +120,7 @@ main { flex: 1; display: flex; gap: 12px; min-height: 0; }
 #dc { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .train { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: var(--panel); border: 1px solid var(--g2);
          border-radius: 10px; box-shadow: 0 0 18px var(--glow); }
+.train > div:empty { display: none; } /* deploy slot, so the gap only shows when the button does */
 .train .release { height: 28px; } .train .release span { line-height: 26px; font-size: 12px; }
 .train .yes { align-self: flex-start; padding: 6px 16px; border-radius: 6px; font-weight: 700; }
 .racks { flex: 1; display: grid; grid-auto-rows: 1fr; gap: 10px; min-height: 0; }
