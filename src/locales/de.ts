@@ -109,6 +109,7 @@ export const de: Dict = {
   's.oops': '✗ Hoppla. Das war Produktion. -${loss}',
   's.goodCatch': '✓ Gut aufgepasst. Clod dankt dir fürs Lesen.',
   's.rejected': '✗ Abgelehnt. Clod schmollt.',
+  's.auto': 'AUTO',
   'ghost.session': 'neue Session',
   'q.edit': 'Diese Änderung vornehmen?',
   'q.allow': 'Diesen Befehl erlauben?',
@@ -144,6 +145,7 @@ export const de: Dict = {
   'agi.p1': 'Clod {model} klickt jetzt für dich auf „fortfahren“. Und für alle anderen.',
   'agi.p2': 'Technisch gesehen bist du jetzt arbeitslos. Glückwunsch.',
   'agi.time': 'Spielzeit:',
+  'agi.duration': '{h} Std. {m} Min.',
   'agi.keep': 'Trotzdem weiterklicken',
 
   work: [

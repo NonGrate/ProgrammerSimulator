@@ -110,6 +110,7 @@ export const cs: Dict = {
   's.oops': '✗ Jejda. To byla produkce. -${loss}',
   's.goodCatch': '✓ Dobrý postřeh. Clod děkuje, že čteš.',
   's.rejected': '✗ Zamítnuto. Clod se urazil.',
+  's.auto': 'AUTO',
   'ghost.session': 'nová relace',
   'q.edit': 'Chceš provést tuto úpravu?',
   'q.allow': 'Povolit tento příkaz?',
@@ -145,6 +146,7 @@ export const cs: Dict = {
   'agi.p1': 'Clod {model} teď kliká na „pokračovat“ za tebe. A za všechny ostatní.',
   'agi.p2': 'Technicky vzato nemáš práci. Gratulujeme.',
   'agi.time': 'Odehraný čas:',
+  'agi.duration': '{h} h {m} min',
   'agi.keep': 'Klikat dál i tak',
 
   work: [
@@ -162,7 +164,7 @@ export const cs: Dict = {
     'tikety přesunuty do "Done"', 'retro: "víc kafe"', 'párové programování s Clodem', 'CI je zelená (pro jednou)',
     'hádka: taby vs mezery', 'dodané story pointy: {n}',
   ],
-  rackWork: ['větráky na 80 %', 'loss: 0.{n}', 'epocha {n}', 'batch size 4096', 'gradienty tečou', 'tenzory tenzorují'],
+  rackWork: ['větráky na 80 %', 'loss: 0.{n}', 'epocha {n}', 'velikost batche 4096', 'gradienty tečou', 'tenzory tenzorují'],
   products: ['TodoGPT', 'Uber pro kočky', 'Blockchainový toustovač', 'AI lednice', 'SaaS pro SaaS', 'Tinder pro vývojáře',
     'Další JS framework', 'CodMaps'],
   models: ['Střevle', 'Sardinka', 'Makrela', 'Tuňák', 'Mečoun', 'Žralok', 'Kosatka', 'Velryba', 'Kraken', 'Leviatan'],

@@ -115,6 +115,7 @@ export const en = {
   's.oops': '✗ Oops. That was production. -${loss}',
   's.goodCatch': '✓ Good catch. Clod thanks you for reading.',
   's.rejected': '✗ Rejected. Clod sulks.',
+  's.auto': 'AUTO',
   'ghost.session': 'new session',
   'q.edit': 'Do you want to make this edit?',
   'q.allow': 'Allow this command?',
@@ -153,6 +154,7 @@ export const en = {
   'agi.p1': 'Clod {model} now clicks "proceed" for you. And for everyone else.',
   'agi.p2': 'You are, technically, unemployed. Congratulations.',
   'agi.time': 'Time played:',
+  'agi.duration': '{h}h {m}m',
   'agi.keep': 'Keep clicking anyway',
 
   // Line pools

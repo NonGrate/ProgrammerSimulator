@@ -122,7 +122,7 @@ function resolve(w: Win, yes: boolean, at: HTMLElement) {
 
 // ---------- grid ----------
 export function addSession(i: number) {
-  const root = el('div', 'win'), bar = el('div', 'progress'), body = el('div', 'body'), tag = el('span', 'tag', 'AUTO')
+  const root = el('div', 'win'), bar = el('div', 'progress'), body = el('div', 'body'), tag = el('span', 'tag', t('s.auto'))
   const head = el('div', 'bar')
   head.append(el('i', 'dot'), el('i', 'dot'), el('i', 'dot'), el('span', 'title', `session-${i + 1} · ${PROJECTS[i]}`), tag)
   bar.append(el('i'))

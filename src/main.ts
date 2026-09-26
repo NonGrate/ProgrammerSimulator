@@ -32,7 +32,7 @@ function agi() {
   if (s.agi) return
   s.agi = true; save()
   $('agi-p1').textContent = t('agi.p1', { model: tl('models').at(-1)! })
-  $('agi-time').textContent = `${Math.floor(s.played / 3600)}h ${Math.floor((s.played % 3600) / 60)}m`
+  $('agi-time').textContent = t('agi.duration', { h: Math.floor(s.played / 3600), m: Math.floor((s.played % 3600) / 60) })
   $<HTMLDialogElement>('agi').showModal()
 }
 $('agi-close').onclick = () => $<HTMLDialogElement>('agi').close()

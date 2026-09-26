@@ -110,6 +110,7 @@ export const sk: Dict = {
   's.oops': '✗ Ups. To bola produkcia. -${loss}',
   's.goodCatch': '✓ Dobrý postreh. Clod ďakuje, že čítaš.',
   's.rejected': '✗ Zamietnuté. Clod sa urazil.',
+  's.auto': 'AUTO',
   'ghost.session': 'nová relácia',
   'q.edit': 'Chceš vykonať túto úpravu?',
   'q.allow': 'Povoliť tento príkaz?',
@@ -145,6 +146,7 @@ export const sk: Dict = {
   'agi.p1': 'Clod {model} teraz kliká na „pokračovať“ za teba. A za všetkých ostatných.',
   'agi.p2': 'Technicky vzaté nemáš prácu. Gratulujeme.',
   'agi.time': 'Odohraný čas:',
+  'agi.duration': '{h} h {m} min',
   'agi.keep': 'Aj tak klikať ďalej',
 
   work: [
@@ -162,7 +164,7 @@ export const sk: Dict = {
     'tikety presunuté do "Done"', 'retro: "viac kávy"', 'párové programovanie s Clodom', 'CI je zelená (pre zmenu)',
     'hádka: taby vs medzery', 'dodané story pointy: {n}',
   ],
-  rackWork: ['ventilátory na 80 %', 'loss: 0.{n}', 'epocha {n}', 'batch size 4096', 'gradienty tečú', 'tenzory tenzorujú'],
+  rackWork: ['ventilátory na 80 %', 'loss: 0.{n}', 'epocha {n}', 'veľkosť batchu 4096', 'gradienty tečú', 'tenzory tenzorujú'],
   products: ['TodoGPT', 'Uber pre mačky', 'Blockchainový hriankovač', 'AI chladnička', 'SaaS pre SaaS', 'Tinder pre vývojárov',
     'Ďalší JS framework', 'CodMaps'],
   models: ['Čerebľa', 'Sardinka', 'Makrela', 'Tuniak', 'Mečúň', 'Žralok', 'Kosatka', 'Veľryba', 'Kraken', 'Leviatan'],

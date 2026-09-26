@@ -42,7 +42,7 @@ export const prompt = (danger: boolean) => {
 // Layer 2: agent requests are commands, so they stay English
 export const AGENT_NAMES = ['tests', 'docs', 'refactor', 'lint', 'types', 'security', 'perf', 'i18n', 'migrate', 'review']
 const AGENT_SAFE = ['Edit({file})', 'Bash(npm test)', 'Write({file})', 'Bash(npm i {pkg})', 'Grep("any")']
-const AGENT_DANGER = ['rm -rf src/', 'git reset --hard', 'delete all tests', 'npm publish', 'DROP DATABASE', 'force-push main']
+const AGENT_DANGER = ['rm -rf src/', 'git reset --hard', 'rm -rf tests/', 'npm publish', 'DROP DATABASE', 'force-push main']
 export const agentRequest = (danger: boolean) => fill(pick(danger ? AGENT_DANGER : AGENT_SAFE))
 
 // Layer 3 + 4
