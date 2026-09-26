@@ -100,7 +100,7 @@ const SECTIONS: [StrKey, ItemId[], () => boolean][] = [
   ['shop.sessions', ['window', 'model', 'context', 'auto', 'allow'], () => true],
 ]
 const OBSOLETE_IN_TEAMS: ItemId[] = ['window', 'auto', 'allow', 'slots', 'aauto'] // sessions are fully automated inside teams
-const lockText = (r: E.LockReason) => t(`lock.${r}`, { n: r === 'teams' ? E.MAX_TEAMS : E.MAX_WINDOWS })
+const lockText = (r: E.LockReason) => t(`lock.${r}`, { n: r === 'teams' ? E.MAX_TEAMS : r === 'companies' ? E.COMPANY_COUNT : E.MAX_WINDOWS })
 
 function buy(id: ItemId) {
   const it = items[id], p = it.price()

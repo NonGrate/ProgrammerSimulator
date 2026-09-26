@@ -91,6 +91,7 @@ export const sk: Dict = {
   'lock.teams': 'najmi všetkých {n} tímov',
   'lock.moreSessions': 'otvor viac relácií',
   'lock.moreTeams': 'najmi viac tímov',
+  'lock.companies': "kúp všetkých {n} firiem",
   'lock.locked': 'zamknuté',
 
   'toast.agents': 'Úroveň 2 odomknutá: kúp sloty pre agentov a Clod začne delegovať.',

@@ -90,6 +90,7 @@ export const de: Dict = {
   'lock.teams': 'stell alle {n} Teams ein',
   'lock.moreSessions': 'öffne mehr Sessions',
   'lock.moreTeams': 'stell mehr Teams ein',
+  'lock.companies': "kauf alle {n} Firmen",
   'lock.locked': 'gesperrt',
 
   'toast.agents': 'Ebene 2 freigeschaltet: Kauf Agenten-Slots und Clod fängt an zu delegieren.',

@@ -91,6 +91,7 @@ export const ru: Dict = {
   'lock.teams': 'найми все {n} команд',
   'lock.moreSessions': 'открой больше сессий',
   'lock.moreTeams': 'найми больше команд',
+  'lock.companies': "купи все {n} компаний",
   'lock.locked': 'закрыто',
 
   'toast.agents': 'Уровень 2 открыт: купи слоты агентов, и Clod начнёт делегировать.',

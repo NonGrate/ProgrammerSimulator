@@ -94,6 +94,7 @@ export const en = {
   'lock.teams': 'hire all {n} teams',
   'lock.moreSessions': 'open more sessions',
   'lock.moreTeams': 'hire more teams',
+  'lock.companies': "buy all {n} companies",
   'lock.locked': 'locked',
 
   // Toasts

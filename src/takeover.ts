@@ -38,7 +38,7 @@ export function refreshTakeover() {
   goalFill.style.width = `${goalProgress() * 100}%`
   goalLabel.textContent = t('k.goal', { a: E.fmt(s.money), b: E.fmt(goalPrice) })
   goalBtn.textContent = t('k.buyInternet', { price: E.fmt(goalPrice) })
-  goalBtn.hidden = !!s.lv.internet || s.money < goalPrice
+  goalBtn.hidden = !!s.lv.internet || s.money < goalPrice || s.lv.acq < E.COMPANY_COUNT // all 10 companies first
   cards.forEach((card, i) => {
     const owned = i < s.lv.acq, next = i === s.lv.acq
     card.classList.toggle('owned', owned)

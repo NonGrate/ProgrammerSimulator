@@ -45,7 +45,10 @@ test('layer 5: only after AGI, with its own prices and multipliers', () => {
   const lv = zero()
   assert.equal(E.locked('acq', lv, 12, E.MODEL_COUNT - 1), 'agi')
   assert.equal(E.locked('acq', lv, 12, E.MODEL_COUNT), false)
+  assert.equal(E.locked('internet', lv, 12, E.MODEL_COUNT), 'companies')
+  lv.acq = E.COMPANY_COUNT
   assert.equal(E.locked('internet', lv, 12, E.MODEL_COUNT), false)
+  lv.acq = 0
   // AGI raises the cap, and the extra levels are priced on the post-AGI scale, not the old curve
   assert.equal(E.maxLevel('gpu', E.MODEL_COUNT - 1), E.UPGRADES.gpu.max)
   assert.equal(E.maxLevel('gpu', E.MODEL_COUNT), E.UPGRADES.gpu.max + (E.AGI_BONUS.gpu ?? 0))

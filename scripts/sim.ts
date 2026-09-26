@@ -70,7 +70,7 @@ const value = () => { // $/s now plus what users/compute will add within a minut
   const next = tier < E.MODEL_COUNT ? E.MODEL_MULT : E.FINETUNE_MULT
   return m + (lv.dc ? r.money * (next - 1) * r.compute * H / E.trainCost(tier) : 0)
 }
-const l3 = t; let l4 = 0, l5 = 0
+const l3 = t; let l4 = 0, l5 = 0, lastAcq = 0
 while (t < 10 * 3600 && !lv.internet) {
   t += 1
   const r = rates(); money += r.money; users += r.users; progress += r.compute
@@ -92,6 +92,8 @@ while (t < 10 * 3600 && !lv.internet) {
     money -= best.cost; lv[best.id]++; buys.push(t)
     if (best.id === 'teams') report(l2, 'Teams bought'), buys.push(t)
     if (best.id === 'dc') { report(l3, 'Layer 3 done (datacenter bought)'); l4 = t }
+    if (best.id === 'acq' && lv.acq === E.COMPANY_COUNT) lastAcq = t
+    if (best.id === 'internet') console.log(`   last company -> Internet: ${((t - lastAcq) / 60).toFixed(1)} min`)
     console.log(`${(t / 60).toFixed(1).padStart(5)}m  ${best.id.padEnd(8)} teams=${teams()} sprint=${lv.sprint} mkt=${lv.mkt} racks=${1 + lv.rack} gpu=${lv.gpu} ctx=${lv.context} acq=${lv.acq} tier=${tier} users=${E.fmt(users)}  $${E.fmt(rates().money)}/s`)
   }
 }

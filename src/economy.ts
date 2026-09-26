@@ -40,7 +40,7 @@ export const ACQ_MULT = 3 // per acquisition
 export const COMPANY_COUNT = 10
 export const NGP_MULT = 2 // New Game+: all income ×2 per finished run
 // Extra levels unlocked by AGI, so the post-game still has upgrades to buy
-export const AGI_BONUS: Partial<Record<string, number>> = { context: 10, mkt: 10, gpu: 10, sprint: 5 }
+export const AGI_BONUS: Partial<Record<string, number>> = { context: 10, mkt: 10, gpu: 20, sprint: 5 } // GPUs go furthest so fine-tunes don't stall
 // ...priced on the post-AGI scale, otherwise the old curves make them pocket change
 export const BONUS_LEVEL = { base: 1e23, growth: 6 }
 
@@ -64,8 +64,8 @@ export const UPGRADES = {
   rack:    { base: 2e15, growth: 1.6,  max: MAX_RACKS - 1 },
   gpu:     { base: 5e15, growth: 3,    max: 20 },
   cooling: { base: 1e17, growth: 1,    max: 1 },
-  acq:     { base: 1e25, growth: 15,   max: COMPANY_COUNT },
-  internet:{ base: 1e35, growth: 1,    max: 1 },
+  acq:     { base: 1e25, growth: 12,   max: COMPANY_COUNT },
+  internet:{ base: 3e35, growth: 1,    max: 1 },
 } as const
 export type UpgradeId = keyof typeof UPGRADES
 export type Levels = Record<UpgradeId, number>
@@ -103,9 +103,10 @@ export function income(lv: Levels, windows: number, human = true) {
 }
 
 // Things you can't buy yet (not the same as maxed out). Returns a lock reason key for the locales.
-export type LockReason = 'sessions' | 'slots' | 'teams' | 'moreSessions' | 'moreTeams' | 'locked' | 'agi'
+export type LockReason = 'sessions' | 'slots' | 'teams' | 'moreSessions' | 'moreTeams' | 'locked' | 'agi' | 'companies'
 export function locked(id: UpgradeId, lv: Levels, windows: number, tier = 0): LockReason | false {
   if ((id === 'acq' || id === 'internet') && tier < MODEL_COUNT) return 'agi'
+  if (id === 'internet' && lv.acq < COMPANY_COUNT) return 'companies' // own the whole industry first
   const need: Partial<Record<UpgradeId, [boolean, LockReason]>> = {
     agents: [windows < MAX_WINDOWS, 'sessions'],
     teams: [lv.slots < UPGRADES.slots.max, 'slots'],
