@@ -85,7 +85,8 @@ export function layoutTeams() {
 }
 export const updateTeamGhost = () => ghost.update(E.upgradePrice('team', s.lv.team), count() >= E.MAX_TEAMS)
 
-export const teamsWaiting = () => teams.filter(tm => tm.phase === 'ship').length
+// Only teams that need the player: CI/CD teams ship by themselves
+export const teamsWaiting = () => teams.filter((tm, i) => tm.phase === 'ship' && !isAuto(i)).length
 
 export function initTeams(container: HTMLElement, buyTeam: () => void) {
   grid = container

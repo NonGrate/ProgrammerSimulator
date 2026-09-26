@@ -31,19 +31,19 @@ button { font: inherit; cursor: pointer; }
 [hidden] { display: none !important; }
 
 /* HUD */
-.hud { display: flex; gap: 24px; align-items: center; padding: 10px 16px; background: var(--panel);
+.hud { display: flex; gap: 24px; align-items: baseline; /* title, money and stats share one text line */ padding: 10px 16px; background: var(--panel);
        border: 1px solid var(--line); border-radius: 10px; }
-.logo { color: var(--g); font-weight: 700; letter-spacing: 1px; }
+.logo { color: var(--g); font-weight: 700; font-size: 20px; letter-spacing: 1px; text-shadow: 0 0 10px var(--glow); }
 .money { font-size: 26px; font-weight: 700; color: var(--g); text-shadow: 0 0 12px var(--glow); min-width: 170px; }
 .stat { color: var(--dim); } .stat span { color: var(--txt); }
-.icon { margin-left: auto; background: none; border: 1px solid var(--line); color: var(--dim); border-radius: 8px;
+.icon { margin-left: auto; align-self: center; background: none; border: 1px solid var(--line); color: var(--dim); border-radius: 8px;
         width: 34px; height: 34px; font-size: 16px; }
 .icon:hover { color: var(--g); border-color: var(--g2); }
 
 main { flex: 1; display: flex; gap: 12px; min-height: 0; }
 #stats { display: flex; gap: 24px; }
-#tabs { display: flex; gap: 6px; }
-#tabs button { background: none; color: var(--dim); border: 1px solid var(--line); border-radius: 6px; padding: 5px 12px; }
+#tabs { display: flex; gap: 6px; align-self: center; } /* own row, centered: header stats can't push it */
+#tabs button { background: none; color: var(--dim); border: 1px solid var(--line); border-radius: 6px; padding: 5px 16px; min-width: 140px; }
 #tabs button.on { background: var(--g); color: #04110a; border-color: var(--g); }
 #tabs button.alert { border-color: var(--g); color: var(--g); animation: pulse 1.2s infinite; }
 

@@ -51,7 +51,8 @@ function deploy(at: HTMLElement) {
   else toast(`${t('toast.deployed', { model: modelName(s.tier - 1), mult: E.fmt(E.modelMult(s.tier)) })} ${tl('modelLines')[s.tier - 1]}`)
 }
 
-export const dcAlert = () => racks.some(r => r.hot) || !!deployBox?.firstChild
+// Only when the player must click: liquid cooling handles overheating by itself
+export const dcAlert = () => (!s.lv.cooling && racks.some(r => r.hot)) || !!deployBox?.firstChild
 
 export function initDc(container: HTMLElement, agi: () => void, buyRack: () => void) {
   onAgi = agi
